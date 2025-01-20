@@ -33,7 +33,7 @@ git-prune: ## Prune the git repository
 	@rm .branches_to_delete
 
 dependencies-compile: ## Compile the dependencies
-	@. .venv/bin/activate && uv pip compile --universal -o requirements.txt --no-deps pyproject.toml
+	@. .venv/bin/activate && uv pip compile --universal -o requirements.txt --no-deps --no-annotate --no-header pyproject.toml
 
 dependencies-install: ## Install the dependencies
 	@. .venv/bin/activate && uv sync
