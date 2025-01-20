@@ -1,0 +1,10 @@
+.*
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.swp
+
+
+!.python-version
+!.gitignore

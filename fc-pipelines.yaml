@@ -1,0 +1,145 @@
+apiVersion: "1.12.3"
+createNamespace: true
+namespace: &namespace cogito
+customLabels:
+  - smc.slack-tektonbot-token=true
+  - smc.jarvis-github-token=true
+  - role.deploy-k8s/fc-idi-pro-rev1=true
+
+alias: &image-alias
+  image: europe-west1-docker.pkg.dev/fc-shared/common/pipeline-slack-notifications:0.1.11
+
+github-status-alias: &github-status-alias
+  description: curl for set inprogress status build on github
+  <<: *image-alias
+  burnupEnabled: "false"
+  burndownEnabled: "false"
+  params:
+    - name: pipelineName
+      value: $(context.pipelineRun.name)
+    - name: pipelineNamespace
+      value: $(context.pipelineRun.namespace)
+  env:
+    - name: JARVIS_GITHUB_TOKEN
+      valueFrom:
+        secretKeyRef:
+          key: jarvis-github-token
+          name: jarvis-github-token
+
+secrets-scan: &secrets-scan
+  image: docker.io/zricethezav/gitleaks:latest
+  script: |
+    #!/bin/bash
+    set -e
+    gitleaks detect --no-git --source . --log-level debug "$@" --redact --verbose || exit 1;
+
+configuration:
+  gitCredentialsSecret: github-credentials
+  tektonDashboardURL: https://tekton.cdnpk.net
+  sendmailSender: jarvis@freepik.com
+  nodeSelector:
+    machine_type: n2d-standard-16
+  tolerations:
+    - key: "type"
+      operator: "Equal"
+      value: "pipelines"
+      effect: "NoSchedule"
+
+pipelines:
+  branches:
+    - name: auto-versioning
+      regex: "^(master|main)$"
+      serviceAccount: *namespace
+      nextPipeline: { }
+      steps:
+        - name: "commitizen"
+          description: "Generate version tag"
+          image: europe-west1-docker.pkg.dev/fc-shared/common/pipeline-commitizen-3.12.0:latest
+          burndownEnabled: "false"
+          results:
+            - version
+          script: |
+            #!/usr/bin/env sh
+            set -ex
+            
+            cp -R "/fc/git-credentials" /root/.ssh
+            chmod 700 /root/.ssh
+            chmod -R 400 /root/.ssh/*
+            
+            git config user.email "$(params.email)"
+            git config user.name "$(params.author)"
+            
+            git fetch --all --tags
+            git pull --unshallow
+            cz bump --changelog -a --yes
+            git push --atomic origin $(cz version -p) $(params.branch)
+            cz version -p | tee $(results.version.path)
+            # replace the version in the setup.py file
+            sed -i "s/version='.*'/version='$(cz version -p)'/" setup.py
+  tags:
+    - name: ci
+      regex: ^([0-9]+)\.([0-9]+)\.([0-9]+)$
+      serviceAccount: *namespace
+      nextPipeline: { }
+      steps:
+        - name: secrets-scan
+          <<: *secrets-scan
+
+        - name: upload-python-package
+          description: Publish python library
+          runAfter:
+            - secrets-scan
+          image: python:latest
+          burndownEnabled: "false"
+          script: |
+            #!/usr/bin/env sh
+            set -ex
+            pip install build
+            pip install twine
+            pip install twine keyrings.google-artifactregistry-auth wheel
+            python -m build
+            python -m twine upload dist/* --skip-existing --repository-url https://europe-west1-python.pkg.dev/fc-shared/python/
+
+  pull_requests:
+    - name: pr
+      regex: ".+"
+      serviceAccount: *namespace
+      nextPipeline: { }
+      steps:
+        - name: status-pr-initial
+          <<: *github-status-alias
+          script: |
+            #!/bin/sh
+            curl -L -X POST \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer $JARVIS_GITHUB_TOKEN" -H 'X-GitHub-Api-Version: 2022-11-28' \
+            https://api.github.com/repos/freepik-company/ai-idi-queue-system/statuses/$(params.commit) \
+            -d '{"state":"pending","target_url":"https://pipelines.fpkmon.com/#/namespaces/$(params.pipelineNamespace)/pipelineruns/$(params.pipelineName)","description":"Build In progress: for commit $(params.commit)","context":"tekton-integration-pr/full-pipeline"}'
+
+        - name: gitleaks-check
+          <<: *secrets-scan
+
+      finishSteps:
+        - name: status-pr-failed
+          condition: "failed"
+          <<: *github-status-alias
+          script: |
+            #!/bin/sh
+            set -e
+            curl -L -X POST \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer $JARVIS_GITHUB_TOKEN" -H 'X-GitHub-Api-Version: 2022-11-28' \
+            https://api.github.com/repos/freepik-company/ai-idi-queue-system/statuses/$(params.commit) \
+            -d '{"state":"failure","target_url":"https://pipelines.fpkmon.com/#/namespaces/$(params.pipelineNamespace)/pipelineruns/$(params.pipelineName)","description":"Build Failure: for commit $(params.commit)","context":"tekton-integration-pr/full-pipeline"}'
+
+        - name: status-pr-successful
+          condition: "success"
+          <<: *github-status-alias
+          script: |
+            #!/bin/sh
+            set -e
+            curl -L -X POST \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer $JARVIS_GITHUB_TOKEN" -H 'X-GitHub-Api-Version: 2022-11-28' \
+            https://api.github.com/repos/freepik-company/ai-idi-queue-system/statuses/$(params.commit) \
+            -d '{"state":"success","target_url":"https://pipelines.fpkmon.com/#/namespaces/$(params.pipelineNamespace)/pipelineruns/$(params.pipelineName)","description":"Build Success: for commit $(params.commit)","context":"tekton-integration-pr/full-pipeline"}'
