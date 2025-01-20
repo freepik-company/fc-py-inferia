@@ -11,7 +11,8 @@ sys.path.insert(0, root_dir)
 from cogito import Application
 
 app = Application(
-        port=8080
+        port=8080,
+        debug_mode=True
 )
 
 if __name__ == "__main__":
