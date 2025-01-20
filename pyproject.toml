@@ -5,8 +5,10 @@ description = "Cogito is a Python module designed to streamline the creation and
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "click>=8.1.8",
     "fastapi>=0.115.6",
     "pydantic>=2.10.5",
+    "pyyaml>=6.0.2",
     "uvicorn>=0.34.0",
 ]
 
