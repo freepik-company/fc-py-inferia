@@ -2,6 +2,8 @@ import importlib
 from pathlib import Path
 from typing import Any
 
+from cogito.core.models import BasePredictor
+
 
 def load_predictor(class_path) -> Any:
     predictor_path, predictor_class = class_path.split(":")
@@ -17,3 +19,8 @@ def load_predictor(class_path) -> Any:
 
     # Instantiate and return the class
     return predict_instance
+
+
+def get_predictor_handler_return_type(predictor: BasePredictor):
+    """This method returns the type of the output of the predictor.predict method"""
+    return predictor.predict.__annotations__["return"]

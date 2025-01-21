@@ -10,8 +10,8 @@ from cogito.core.models import BasePredictor
 from cogito.api.handlers import (
     create_predictor_handler,
     health_check_handler,
-    get_predictor_handler_return_type,
 )
+from core.utils import get_predictor_handler_return_type
 from cogito.core.config import ConfigFile
 from cogito.core.utils import load_predictor
 
