@@ -24,9 +24,9 @@ jobs:
       run: |
         git fetch --tags
         cz bump --yes --dry-run
-        NEW_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
-        echo "New tag: $NEW_TAG"
-        echo "::set-output name=new_tag::$NEW_TAG"
+#         NEW_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+#         echo "New tag: $NEW_TAG"
+#         echo "::set-output name=new_tag::$NEW_TAG"
 
 #    - name: Publish to PyPI
 #      if: steps.tag.outputs.new_tag != ''
