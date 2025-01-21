@@ -24,6 +24,18 @@ class RouteConfig(BaseModel):
                 tags=['predict']
         )
 
+
+class FastAPIConfig(BaseModel):
+    host: str = "127.0.0.1"
+    port: int = 8000
+    debug: bool = False
+    access_log: bool = True
+
+    @classmethod
+    def default(cls):
+        return cls()
+
+
 class ServerConfig(BaseModel):
     """
     Server configuration.
@@ -31,6 +43,7 @@ class ServerConfig(BaseModel):
     name: str
     description: Optional[str] = None
     version: Optional[str] = '1.0.0'
+    fastapi: FastAPIConfig
     routes: List[RouteConfig] = List
 
     @classmethod
@@ -39,6 +52,7 @@ class ServerConfig(BaseModel):
                 name='Cogito ergo infero',
                 description='Inference server',
                 version='0.1.0',
+                fastapi=FastAPIConfig.default(),
                 routes=[RouteConfig.default()]
         )
 
