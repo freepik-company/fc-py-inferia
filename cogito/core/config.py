@@ -5,6 +5,9 @@ import yaml
 from pydantic import BaseModel
 from pydantic.v1 import BaseSettings
 
+from cogito.core.exceptions import ConfigFileNotFoundError
+
+
 class RouteConfig(BaseModel):
     """
     Route configuration.
@@ -100,8 +103,7 @@ class ConfigFile(BaseModel):
         except Exception as e:
             logging.error(f"Error loading config file: {file_path}. Empty config will be used. {e}")
         finally:
-            logging.debug(f"Starting up with empty config.")
-            return cls.default()
+            raise ConfigFileNotFoundError(file_path)
         
     def save_to_file(self, file_path: str) -> None:
         with open(file_path, "w") as file:
