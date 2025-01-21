@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import uvicorn
 from fastapi import FastAPI
 
@@ -10,25 +8,17 @@ from cogito.core.config import ConfigFile
 class Application:
     def __init__(
             self,
-            title: str = "Cogito ergo sum",
-            version: str = "0.1.0",
-            description: str = "An API for inference and reasoning with an amazing user interface",
-            host: str = "127.0.0.1",
-            port: int = 8000,
-            show_fastapi_access_logs: bool = True,
-            debug_mode: bool = False,
+            config_file_path: str = "."
     ):
 
-        self.host = host
-        self.port = port
-        self.debug_mode = debug_mode
+        self.config = ConfigFile.load_from_file(f"{config_file_path}/cogito.yaml")
 
         self.app = FastAPI(
-            title=title,
-            version=version,
-            description=description,
-            access_log=show_fastapi_access_logs,
-            debug=debug_mode,
+            title=self.config.cogito.server.name,
+            version=self.config.cogito.server.version,
+            description=self.config.cogito.server.description,
+            access_log=self.config.cogito.server.fastapi.access_log,
+            debug=self.config.cogito.server.fastapi.debug,
         )
 
         """ Include default routes """
@@ -43,9 +33,8 @@ class Application:
 
 
         """ Include custom routes """
-        config = ConfigFile.load_from_file(f"{Path.cwd()}/cogito.yaml")
 
-        for route in config.routes:
+        for route in self.config.cogito.server.routes:
             self.app.add_api_route(
                     route.path,
                     create_model_handler(route.predictor),
@@ -56,4 +45,8 @@ class Application:
             )
 
     def run(self):
-        uvicorn.run(self.app, host=self.host, port=self.port)
+        uvicorn.run(
+                self.app,
+                host=self.config.cogito.server.fastapi.host,
+                port=self.config.cogito.server.fastapi.port
+        )
