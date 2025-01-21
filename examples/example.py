@@ -18,10 +18,7 @@ logging.basicConfig(
 
 from cogito import Application
 
-app = Application(
-        port=8080,
-        debug_mode=True
-)
+app = Application("..")
 
 if __name__ == "__main__":
     app.run()

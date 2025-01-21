@@ -1,9 +1,10 @@
-from pathlib import Path
+import logging
 from typing import Dict
 
 import uvicorn
 from fastapi import FastAPI
 
+from cogito.core.exceptions import ConfigFileNotFoundError
 from cogito.core.models import BasePredictor
 from cogito.api.handlers import create_predictor_handler, health_check_handler
 from cogito.core.config import ConfigFile
@@ -13,28 +14,24 @@ from cogito.core.utils import load_predictor
 class Application:
     def __init__(
             self,
-            title: str = "Cogito ergo sum",
-            version: str = "0.1.0",
-            description: str = "An API for inference and reasoning with an amazing user interface",
-            host: str = "127.0.0.1",
-            port: int = 8000,
-            show_fastapi_access_logs: bool = True,
-            debug_mode: bool = False,
+            config_file_path: str = "."
     ):
 
-        self.host = host
-        self.port = port
-        self.debug_mode = debug_mode
+        try:
+            self.config = ConfigFile.load_from_file(f"{config_file_path}/cogito.yaml")
+        except ConfigFileNotFoundError as e:
+            logging.warning(f"Error loading config file: {e}. Using default configuration.")
+            self.config = ConfigFile.default()
 
         map_route_to_model: Dict[str, str] = {}
         map_model_to_instance: Dict[str, BasePredictor] = {}
 
         self.app = FastAPI(
-            title=title,
-            version=version,
-            description=description,
-            access_log=show_fastapi_access_logs,
-            debug=debug_mode,
+            title=self.config.cogito.server.name,
+            version=self.config.cogito.server.version,
+            description=self.config.cogito.server.description,
+            access_log=self.config.cogito.server.fastapi.access_log,
+            debug=self.config.cogito.server.fastapi.debug,
         )
 
         """ Include default routes """
@@ -49,9 +46,8 @@ class Application:
 
 
         """ Include custom routes """
-        config = ConfigFile.load_from_file(f"{Path.cwd()}/cogito.yaml")
 
-        for route in config.routes:
+        for route in self.config.cogito.server.routes:
             map_route_to_model[route.path] = route.predictor
             if route.predictor not in map_model_to_instance:
                 predictor = load_predictor(route.predictor)
@@ -62,7 +58,6 @@ class Application:
                     raise #fixme Use a custom exception
 
                 map_model_to_instance[route.predictor] = predictor
-
             self.app.add_api_route(
                     route.path,
                     create_predictor_handler(map_model_to_instance.get(route.predictor)), #fixme Handle None
@@ -73,4 +68,8 @@ class Application:
             )
 
     def run(self):
-        uvicorn.run(self.app, host=self.host, port=self.port)
+        uvicorn.run(
+                self.app,
+                host=self.config.cogito.server.fastapi.host,
+                port=self.config.cogito.server.fastapi.port
+        )
