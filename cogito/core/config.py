@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import yaml
@@ -94,7 +95,12 @@ class ConfigFile(BaseModel):
             with open(file_path, "r") as file:
                 yaml_data = yaml.safe_load(file)
             return cls(**yaml_data)
-        except Exception:
+        except FileNotFoundError as e:
+            logging.info(f"Config file not found: {file_path}. Empty config will be used. {e}")
+        except Exception as e:
+            logging.error(f"Error loading config file: {file_path}. Empty config will be used. {e}")
+        finally:
+            logging.debug(f"Starting up with empty config.")
             return cls.default()
         
     def save_to_file(self, file_path: str) -> None:
