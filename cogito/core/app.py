@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Dict
 
 import uvicorn
@@ -6,7 +7,11 @@ from fastapi import FastAPI
 
 from cogito.core.exceptions import ConfigFileNotFoundError
 from cogito.core.models import BasePredictor
-from cogito.api.handlers import create_predictor_handler, health_check_handler
+from cogito.api.handlers import (
+    create_predictor_handler,
+    health_check_handler,
+)
+from core.utils import get_predictor_handler_return_type
 from cogito.core.config import ConfigFile
 from cogito.core.utils import load_predictor
 
@@ -18,7 +23,11 @@ class Application:
     ):
 
         try:
-            self.config = ConfigFile.load_from_file(f"{config_file_path}/cogito.yaml")
+            self.config = ConfigFile.load_from_file(
+                os.path.join(
+                    f"{config_file_path}/cogito.yaml"
+                )
+            )
         except ConfigFileNotFoundError as e:
             logging.warning(f"Error loading config file: {e}. Using default configuration.")
             self.config = ConfigFile.default()
@@ -36,12 +45,12 @@ class Application:
 
         """ Include default routes """
         self.app.add_api_route(
-                "/health-check",
-                health_check_handler,
-                methods=["GET"],
-                name="health_check",
-                description="Health check endpoint",
-                tags=["health"],
+            "/health-check",
+            health_check_handler,
+            methods=["GET"],
+            name="health_check",
+            description="Health check endpoint",
+            tags=["health"],
         )
 
 
@@ -58,13 +67,17 @@ class Application:
                     raise #fixme Use a custom exception
 
                 map_model_to_instance[route.predictor] = predictor
+            else:
+                logging.info(f"Predictor {route.predictor} already loaded")
+
             self.app.add_api_route(
-                    route.path,
-                    create_predictor_handler(map_model_to_instance.get(route.predictor)), #fixme Handle None
-                    methods=["POST"],
-                    name=route.name,
-                    description=route.description,
-                    tags=route.tags,
+                route.path,
+                create_predictor_handler(map_model_to_instance.get(route.predictor)), #fixme Handle None
+                methods=["POST"],
+                name=route.name,
+                description=route.description,
+                tags=route.tags,
+                response_model=get_predictor_handler_return_type(map_model_to_instance.get(route.predictor))
             )
 
     def run(self):

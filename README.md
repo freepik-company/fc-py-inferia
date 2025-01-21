@@ -28,6 +28,13 @@ Then, you can install the package:
 pip install cogito
 ```
 
+## Run example application
+
+```sh
+cd examples
+python app.py
+```
+
 ## Usage
 
 *Put here any information about how to use this amazing library*

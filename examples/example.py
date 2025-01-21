@@ -2,6 +2,8 @@ import logging
 import os
 import sys
 
+HERE = os.path.abspath(os.path.dirname(__file__))
+
 """
 This is a pythonic way to import the Application class from the cogito package from examples folder without being
 a package itself. This is a common pattern in the Python world. 
@@ -18,7 +20,6 @@ logging.basicConfig(
 
 from cogito import Application
 
-app = Application("..")
-
 if __name__ == "__main__":
+    app = Application(config_file_path=HERE)
     app.run()
