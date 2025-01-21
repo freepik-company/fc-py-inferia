@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import yaml
@@ -25,7 +26,12 @@ class ConfigFile(BaseModel):
             with open(file_path, "r") as file:
                 yaml_data = yaml.safe_load(file)
             return cls(**yaml_data)
+        except FileNotFoundError:
+            logging.info(f"Config file not found: {file_path}. Empty config will be used.")
         except Exception:
+            logging.error(f"Error loading config file: {file_path}. Empty config will be used.")
+        finally:
+            logging.debug(f"Starting up with empty config.")
             return cls(
                     name="Cogito ergo sum",
                     description="An API for inference and reasoning with an amazing user interface",
