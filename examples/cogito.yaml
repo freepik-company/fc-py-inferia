@@ -1,0 +1,30 @@
+cogito:
+  server:
+    description: Inference server
+    fastapi:
+      access_log: true
+      debug: false
+      host: 127.0.0.1
+      port: 8000
+    name: Cogito ergo infero
+    routes:
+      - name: Predict Text2Image
+        description: Predict using Text2Image
+        path: "/v1/predict/text2image"
+        predictor: "predict:Text2Image"
+        tags:
+          - text2image
+      - name: Predict Image2Text
+        description: Predict using Image2Text
+        path: "/v1/predict/image2text"
+        predictor: "predict:Image2Text"
+        tags:
+          - image2text
+      - name: Sergio Tejón
+        description: Predict using Sergio Tejón
+        path: "/v1/predict/sergio"
+        predictor: "predict:STejon"
+        tags:
+          - sergiotejon
+    version: 0.1.0
+  training: {}
