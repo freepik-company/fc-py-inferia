@@ -11,7 +11,7 @@ from cogito.api.handlers import (
     create_predictor_handler,
     health_check_handler,
 )
-from core.utils import get_predictor_handler_return_type
+from cogito.core.utils import get_predictor_handler_return_type
 from cogito.core.config import ConfigFile
 from cogito.core.utils import load_predictor
 
