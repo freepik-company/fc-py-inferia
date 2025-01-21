@@ -1,15 +1,17 @@
 from fastapi import Request
 
-from cogito.core.utils import load_predictor
-
+from cogito.core.models import BasePredictor
 
 async def health_check_handler(request: Request) -> dict:
     return {"status": "OK"}
 
-def create_model_handler(model):
+def create_predictor_handler(predictor: BasePredictor):
     async def handler(request: Request) -> dict:
-        predictor = load_predictor(model)
-        predictor.setup()
-        return {"model": model}
+        # Fixme convert request arguments to kwargs and pass them to the model
+        output = predictor.predict()
+
+        return {"output": output}
+
+
 
     return handler

@@ -27,7 +27,7 @@ class Image2Text(BasePredictor):
 
 class STejon(BasePredictor):
     def predict(self, **kwargs) -> Any:
-        pass
+        return "No doy permisos de root"
 
     def setup(self):
-        raise NotImplementedError("No doy permisos de root")
+        pass

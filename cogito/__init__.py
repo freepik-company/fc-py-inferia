@@ -3,7 +3,7 @@ from cogito.core.models import BasePredictor
 
 __all__ = [
     "Application",
-    "BasePredictor"
+    "BasePredictor",
 ]
 
 
