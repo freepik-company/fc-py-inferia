@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Dict
 
 import uvicorn
@@ -6,7 +7,11 @@ from fastapi import FastAPI
 
 from cogito.core.exceptions import ConfigFileNotFoundError
 from cogito.core.models import BasePredictor
-from cogito.api.handlers import create_predictor_handler, health_check_handler, get_predictor_handler_return_type
+from cogito.api.handlers import (
+    create_predictor_handler,
+    health_check_handler,
+    get_predictor_handler_return_type,
+)
 from cogito.core.config import ConfigFile
 from cogito.core.utils import load_predictor
 
@@ -18,7 +23,11 @@ class Application:
     ):
 
         try:
-            self.config = ConfigFile.load_from_file(f"{config_file_path}/cogito.yaml")
+            self.config = ConfigFile.load_from_file(
+                os.path.join(
+                    f"{config_file_path}/cogito.yaml"
+                )
+            )
         except ConfigFileNotFoundError as e:
             logging.warning(f"Error loading config file: {e}. Using default configuration.")
             self.config = ConfigFile.default()

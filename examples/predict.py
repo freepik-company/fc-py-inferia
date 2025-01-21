@@ -28,14 +28,14 @@ class Text2Image(BasePredictor):
         pass
 
 class Image2Text(BasePredictor):
-    def predict(self, **kwargs) -> Any:
+    def predict(self, *args, **kwargs) -> Any:
         pass
 
     def setup(self):
         pass
 
 class STejon(BasePredictor):
-    def predict(self, **kwargs) -> Any:
+    def predict(self, *args, **kwargs) -> Any:
         return "No doy permisos de root"
 
     def setup(self):
