@@ -70,9 +70,11 @@ class Application:
             else:
                 logging.info(f"Predictor {route.predictor} already loaded")
 
+            predictor_class = map_model_to_instance.get(route.predictor)
+
             self.app.add_api_route(
                 route.path,
-                create_predictor_handler(map_model_to_instance.get(route.predictor)), #fixme Handle None
+                create_predictor_handler(predictor_class),
                 methods=["POST"],
                 name=route.name,
                 description=route.description,

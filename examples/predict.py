@@ -1,24 +1,22 @@
-import sys
-import os
-from typing import Any
+from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from cogito import BasePredictor
 
-"""
-This is a pythonic way to import the Application class from the cogito package from examples folder without being
-a package itself. This is a common pattern in the Python world. 
-"""
-root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.insert(0, root_dir)
 
 class Text2ImageResponse(BaseModel):
     image: str
     text: str
 
+class Text2ImageRequest(BaseModel):
+    image: str = Field(..., description="Image URL")
+    scale: float = Field(... , description="Scale factor")
+
 class Text2Image(BasePredictor):
-    def predict(self, *args, **kwargs) -> Text2ImageResponse:
+    def predict(self,
+        text2image_request: Text2ImageRequest,
+    ) -> Text2ImageResponse:
         return Text2ImageResponse(
             image="https://example.com/image.jpg",
             text="Hello world"
@@ -27,15 +25,24 @@ class Text2Image(BasePredictor):
     def setup(self):
         pass
 
+
+class Image2TextResponse(BaseModel):
+    text: str
+
 class Image2Text(BasePredictor):
-    def predict(self, *args, **kwargs) -> Any:
+    def predict(self, instruction: Image2TextResponse) -> Any:
         pass
 
     def setup(self):
         pass
 
+
+class StejonRequest(BaseModel):
+    command: str
+
+
 class STejon(BasePredictor):
-    def predict(self, *args, **kwargs) -> Any:
+    def predict(self, command: StejonRequest) -> Any:
         return "No doy permisos de root"
 
     def setup(self):

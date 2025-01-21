@@ -1,8 +1,8 @@
 import importlib
-from pathlib import Path
 from typing import Any
 
 from cogito.core.models import BasePredictor
+from cogito.core.exceptions import InvalidHandlerSignature
 
 
 def load_predictor(class_path) -> Any:
@@ -24,3 +24,16 @@ def load_predictor(class_path) -> Any:
 def get_predictor_handler_return_type(predictor: BasePredictor):
     """This method returns the type of the output of the predictor.predict method"""
     return predictor.predict.__annotations__["return"]
+
+def get_predictor_handler_params_type(predictor: BasePredictor):
+    """This method returns the type of the input of the predictor.predict method"""
+    annotations = predictor.predict.__annotations__  # NOQA
+
+    params = {k: v for k, v in annotations.items() if k != 'return'}
+    if not params:
+        return object
+
+    if len(params) != 1:
+        raise InvalidHandlerSignature(f"Predict {predictor.__class__.__name__} method must have one and only one parameter")
+
+    return list(params.values())[0]

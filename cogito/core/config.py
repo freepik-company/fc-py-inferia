@@ -53,11 +53,11 @@ class ServerConfig(BaseModel):
     @classmethod
     def default(cls):
         return cls(
-                name='Cogito ergo infero',
-                description='Inference server',
-                version='0.1.0',
-                fastapi=FastAPIConfig.default(),
-                routes=[RouteConfig.default()]
+            name='Cogito ergo infero',
+            description='Inference server',
+            version='0.1.0',
+            fastapi=FastAPIConfig.default(),
+            routes=[RouteConfig.default()]
         )
 
 class TrainingConfig(BaseModel):
