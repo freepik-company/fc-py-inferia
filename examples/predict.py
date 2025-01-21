@@ -2,6 +2,8 @@ import sys
 import os
 from typing import Any
 
+from pydantic import BaseModel
+
 from cogito import BasePredictor
 
 """
@@ -11,9 +13,16 @@ a package itself. This is a common pattern in the Python world.
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, root_dir)
 
+class Text2ImageResponse(BaseModel):
+    image: str
+    text: str
+
 class Text2Image(BasePredictor):
-    def predict(self, **kwargs) -> Any:
-        pass
+    def predict(self, *args, **kwargs) -> Text2ImageResponse:
+        return Text2ImageResponse(
+            image="https://example.com/image.jpg",
+            text="Hello world"
+        )
 
     def setup(self):
         pass
