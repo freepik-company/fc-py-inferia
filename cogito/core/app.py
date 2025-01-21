@@ -41,6 +41,7 @@ class Application:
                 tags=["health"],
         )
 
+
         """ Include custom routes """
         config = ConfigFile.load_from_file(f"{Path.cwd()}/cogito.yaml")
 
