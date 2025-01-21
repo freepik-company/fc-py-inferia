@@ -11,3 +11,7 @@ Cogito CLI
     pass
 
 cli.add_command(initialize)
+
+
+if __name__ == "__main__":
+    cli()
