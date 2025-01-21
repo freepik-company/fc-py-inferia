@@ -1,7 +1,10 @@
+from pathlib import Path
+
 import uvicorn
 from fastapi import FastAPI
 
 from cogito.api.handlers import create_model_handler, health_check_handler
+from cogito.core.config import ConfigFile
 
 
 class Application:
@@ -38,20 +41,18 @@ class Application:
                 tags=["health"],
         )
 
-        """ Include custom routes """
-        routes = [
-            {'path': '/v1/predict/text2image', 'predictor_class': "text2image"},
-            {'path': '/v1/predict/image2image', 'predictor_class': "image2image"},
-        ] # fixme Add real routes here
 
-        for route in routes:
+        """ Include custom routes """
+        config = ConfigFile.load_from_file(f"{Path.cwd()}/cogito.yaml")
+
+        for route in config.routes:
             self.app.add_api_route(
-                    route['path'],
-                    create_model_handler(route['predictor_class']),
+                    route.path,
+                    create_model_handler(route.predictor),
                     methods=["POST"],
-                    name=route['model'],
-                    description=f"Predict using the {route['predictor_class']} predictor class",
-                    tags=[route['model']],
+                    name=route.name,
+                    description=route.description,
+                    tags=route.tags,
             )
 
     def run(self):
