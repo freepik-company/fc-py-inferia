@@ -1,10 +1,11 @@
 import click
-from click import echo_via_pager
 
 from cogito.core.config import CogitoConfig, ConfigFile, FastAPIConfig, RouteConfig, ServerConfig, TrainingConfig
 
+
 def _init_with_default() -> ConfigFile:
     return ConfigFile.default()
+
 
 def _init_prompted() -> ConfigFile:
     click.echo("Please provide the following information to initialize the project configuration:")
@@ -43,7 +44,7 @@ def _init_prompted() -> ConfigFile:
 
     click.echo("Almost there! Let's configure the training settings.")
 
-    #todo add training settings, when defined
+    # todo add training settings, when defined
 
     training = TrainingConfig()
 
@@ -55,7 +56,7 @@ def _init_prompted() -> ConfigFile:
     )
 
     return ConfigFile(
-        cogito=cogito
+            cogito=cogito
     )
 
 
@@ -78,4 +79,3 @@ def init(config_path: str = ".", default: bool = False, force: bool = False) -> 
 
     config.save_to_file(f"{config_path}/cogito.yaml")
     click.echo("Initialized successfully.")
-
