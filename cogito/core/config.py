@@ -93,6 +93,10 @@ class ConfigFile(BaseModel):
         return cls(cogito=CogitoConfig.default())
 
     @classmethod
+    def exists(cls, file_path: str) -> bool:
+        return Path(file_path).exists()
+
+    @classmethod
     def load_from_file(cls, file_path: str) -> "ConfigFile":
         try:
             with open(file_path, "r") as file:
