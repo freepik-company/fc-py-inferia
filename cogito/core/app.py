@@ -9,9 +9,14 @@ from cogito.core.exceptions import ConfigFileNotFoundError
 from cogito.core.models import BasePredictor
 from cogito.api.handlers import (
     create_predictor_handler,
+    wrapper,
     health_check_handler,
 )
+<<<<<<< Updated upstream
 from core.utils import get_predictor_handler_return_type
+=======
+from cogito.core.utils import get_response_base_model
+>>>>>>> Stashed changes
 from cogito.core.config import ConfigFile
 from cogito.core.utils import load_predictor
 
@@ -74,12 +79,19 @@ class Application:
 
             self.app.add_api_route(
                 route.path,
+<<<<<<< Updated upstream
                 create_predictor_handler(predictor_class),
+=======
+                # create_predictor_handler(map_model_to_instance.get(route.predictor)), #fixme Handle None
+                wrapper(
+                    getattr(map_model_to_instance.get(route.predictor), "predict")
+                ),
+>>>>>>> Stashed changes
                 methods=["POST"],
                 name=route.name,
                 description=route.description,
                 tags=route.tags,
-                response_model=get_predictor_handler_return_type(map_model_to_instance.get(route.predictor))
+                response_model=get_response_base_model(map_model_to_instance.get(route.predictor))
             )
 
     def run(self):

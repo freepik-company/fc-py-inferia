@@ -42,3 +42,9 @@ code-style-dirty: ## Check the code style but don't commit
 	@. .venv/bin/activate && uv black --check .
 
 code-style: code-style-dirty ## Check the code style and commit the changes
+
+dev-dependencies: ## Install the development dependencies
+	@. .venv/bin/activate && uv sync --dev
+
+run-test: dev-dependencies ## Run the tests
+	@. .venv/bin/activate && python -m pytest
