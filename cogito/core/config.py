@@ -34,6 +34,8 @@ class RouteConfig(BaseModel):
                 description='Make a single prediction',
                 path='/v1/predict',
                 predictor='predict:Predictor',
+                args=[ArgConfig(name='prompt', type='str', description='The prompt to generate text from')],
+                response=ResponseConfig(type='PredictResponse', description='The generated text'),
                 tags=['predict']
         )
 
