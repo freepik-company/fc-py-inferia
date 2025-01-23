@@ -10,9 +10,9 @@ from fastapi.exceptions import RequestValidationError
 from cogito.core.exceptions import ConfigFileNotFoundError
 from cogito.core.models import BasePredictor
 from cogito.api.handlers import (
-    validate_and_wrap_handler,
     health_check_handler,
 )
+from cogito.core.utils import validate_and_wrap_handler
 from cogito.core.config import ConfigFile
 from cogito.core.utils import load_predictor
 
