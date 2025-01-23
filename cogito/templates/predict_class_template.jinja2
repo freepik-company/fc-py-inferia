@@ -1,0 +1,51 @@
+from cogito import BasePredictor
+
+{% for route in routes %}
+class {{ route.class_name }}(BasePredictor):
+    """
+    Name: {{ route.class_data.name }}
+    Description:
+        {{ route.class_data.description | indent(8) }}
+    Route path: {{ route.class_data.path }}
+    Tags: {{ route.class_data.tags }}
+    {%- if route.class_data.args %}
+    Args:
+        {%- for arg in route.class_data.args %}
+        {{ arg.name }}: {{ arg.type }} - {{ arg.description }}
+        {%- endfor %}
+    {%- endif %}
+    {%- if route.class_data.response %}
+    Response:
+        {{ route.class_data.response.type }} - {{ route.class_data.response.description }}
+    {%- endif %}
+    """
+
+    def setup(self):
+        """
+        This method is called once before the first prediction is made.
+        """
+
+        # TODO: (USER) Implement the setup method or remove it if not needed
+
+        pass
+
+    {% if route.class_data.args %}
+    def predict(self, {% for arg in route.class_data.args %}{{ arg.name }}: {{ arg.type }}{% if not loop.last %}, {% endif %}{% endfor %}) -> PredictResponse:
+    {% else %}
+    def predict(self, *args, **kwargs) -> PredictResponse:
+    {%- endif %}
+        """
+        This method is called for each prediction request.
+        """
+
+        # TODO: (USER) Implement the predict method for inference
+        {% if route.class_data.response %}
+        my_response: {{ route.class_data.response.type }}
+        # TODO: (USER) set the value of my_response based on its type
+        return my_response
+        {% else %}
+        pass
+        {%- endif %}
+
+
+{% endfor %}
