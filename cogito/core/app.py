@@ -9,6 +9,7 @@ from cogito.api.handlers import (
     create_predictor_handler,
     health_check_handler,
 )
+from cogito.api.responses import ErrorResponse
 from cogito.core.config import ConfigFile
 from cogito.core.exceptions import ConfigFileNotFoundError
 from cogito.core.logging import get_logger
@@ -82,14 +83,19 @@ class Application:
             else:
                 self._logger.info("Predictor class already loaded", extra={'predictor': route.predictor})
 
+            model = map_model_to_instance.get(route.predictor)
+            response_model = get_predictor_handler_return_type(model)
+
             self.app.add_api_route(
                     route.path,
-                    create_predictor_handler(map_model_to_instance.get(route.predictor)),  # fixme Handle None
+                    create_predictor_handler(model, response_model),  # fixme Handle None
                     methods=["POST"],
                     name=route.name,
                     description=route.description,
                     tags=route.tags,
-                    response_model=get_predictor_handler_return_type(map_model_to_instance.get(route.predictor))
+                    response_model=response_model,
+                    responses={500: {"model": ErrorResponse}},
+
             )
 
     def run(self):
