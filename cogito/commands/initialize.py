@@ -62,7 +62,7 @@ def _init_prompted() -> ConfigFile:
 
 
 @click.command()
-@click.option("-s", "--scaffold", is_flag=True, default=False, help="Create a scaffold predict class in predict.py (default: True)")
+@click.option("-s", "--scaffold", is_flag=True, default=False, help="Create a scaffold predict class in predict.py")
 @click.option("-d", "--default", is_flag=True, default=False, help="Initialize with default values")
 @click.option("-f", "--force", is_flag=True, default=False, help="Force initialization, even if already initialized")
 @click.pass_context
