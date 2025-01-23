@@ -12,7 +12,7 @@ from cogito.core.models import BasePredictor
 from cogito.api.handlers import (
     health_check_handler,
 )
-from cogito.core.utils import validate_and_wrap_handler
+from cogito.core.utils import wrap_handler
 from cogito.core.config import ConfigFile
 from cogito.core.utils import load_predictor
 
@@ -71,7 +71,7 @@ class Application:
             else:
                 logging.info(f"Predictor {route.predictor} already loaded")
             logging.debug(f"Adding route {route.path} with predictor {route.predictor}")
-            handler = validate_and_wrap_handler(
+            handler = wrap_handler(
                 class_name=route.predictor,
                 original_handler=getattr(map_model_to_instance.get(route.predictor), "predict"),
             )

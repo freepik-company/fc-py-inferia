@@ -28,7 +28,7 @@ def load_predictor(class_path) -> Any:
     return predict_instance
 
 
-def validate_and_wrap_handler(class_name: str, original_handler: Callable) -> Callable:
+def wrap_handler(class_name: str, original_handler: Callable) -> Callable:
     sig = signature(original_handler)
     type_hints = get_type_hints(original_handler)
 
