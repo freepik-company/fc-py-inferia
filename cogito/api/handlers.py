@@ -2,13 +2,22 @@ import time
 from typing import Any
 
 from fastapi import Request
+from starlette.responses import JSONResponse
 
 from cogito.api.responses import ErrorResponse, ResultResponse
 from cogito.core.models import BasePredictor
 
 
-async def health_check_handler(request: Request) -> dict:
-    return {"status": "OK"}
+async def health_check_handler(request: Request) -> JSONResponse:
+    if request.app.state.ready:
+        return JSONResponse(
+            {"status": "OK"}
+        )
+    else:
+        return JSONResponse(
+            {"status": "Starting"},
+            status_code=503,
+        )
 
 
 def create_predictor_handler(predictor: BasePredictor, response_model: ResultResponse):
