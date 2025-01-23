@@ -1,16 +1,32 @@
+import time
 from typing import Any
 
 from fastapi import Request
 
+from cogito.api.responses import ErrorResponse, ResultResponse
 from cogito.core.models import BasePredictor
+
 
 async def health_check_handler(request: Request) -> dict:
     return {"status": "OK"}
 
-def create_predictor_handler(predictor: BasePredictor):
+
+def create_predictor_handler(predictor: BasePredictor, response_model: ResultResponse):
     async def handler(request: Request) -> Any:
         # Fixme convert request arguments to kwargs and pass them to the model
-        return predictor.predict(request)
+        try:
+            start_time = time.time()
+            result = predictor.predict(request)
+            end_time = time.time() - start_time
+
+            response = response_model(
+                    inference_time_seconds=end_time,
+                    input=request.query_params,
+                    result=result,
+            )
+            return response.model_dump()
+        except Exception as e:
+            error = ErrorResponse(message=str(e))
+            return error.to_json_response()
 
     return handler
-

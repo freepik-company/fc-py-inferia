@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+import time
 from typing import Any
 
 from pydantic import BaseModel
@@ -13,30 +14,38 @@ a package itself. This is a common pattern in the Python world.
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, root_dir)
 
-class Text2ImageResponse(BaseModel):
+
+class PredictResponse(BaseModel):
     image: str
     text: str
 
-class Text2Image(BasePredictor):
-    def predict(self, *args, **kwargs) -> Text2ImageResponse:
-        return Text2ImageResponse(
-            image="https://example.com/image.jpg",
-            text="Hello world"
+
+class GoodPredictor(BasePredictor):
+    def predict(self, *args, **kwargs) -> PredictResponse:
+        return PredictResponse(
+                image="https://example.com/image.jpg",
+                text="Hello world"
         )
 
     def setup(self):
         pass
 
-class Image2Text(BasePredictor):
-    def predict(self, *args, **kwargs) -> Any:
-        pass
+
+class DelayPredictor(BasePredictor):
+    def predict(self, *args, **kwargs) -> PredictResponse:
+        time.sleep(5)
+        return PredictResponse(
+                image="https://example.com/image.jpg",
+                text="Hello world"
+        )
 
     def setup(self):
         pass
 
-class STejon(BasePredictor):
+
+class BadPredictor(BasePredictor):
     def predict(self, *args, **kwargs) -> Any:
-        return "No doy permisos de root"
+        raise Exception("No doy permisos de root")
 
     def setup(self):
         pass

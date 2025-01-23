@@ -8,23 +8,23 @@ cogito:
       port: 8000
     name: Cogito ergo infero
     routes:
-      - name: Predict Text2Image
-        description: Predict using Text2Image
-        path: "/v1/predict/text2image"
-        predictor: "predict:Text2Image"
+      - name: Good Predictor
+        description: Simulates a good predictions, with results.
+        path: "/v1/predict/good"
+        predictor: "predict:GoodPredictor"
         tags:
-          - text2image
-      - name: Predict Image2Text
-        description: Predict using Image2Text
-        path: "/v1/predict/image2text"
-        predictor: "predict:Image2Text"
+          - good
+      - name: Delay Predictor
+        description: Simulates a delayed prediction, with results.
+        path: "/v1/predict/delay"
+        predictor: "predict:DelayPredictor"
         tags:
-          - image2text
-      - name: Sergio Tejón
-        description: Predict using Sergio Tejón
-        path: "/v1/predict/sergio"
-        predictor: "predict:STejon"
+          - delay
+      - name: Bad Predictor
+        description: Simulates a bad prediction, with error response.
+        path: "/v1/predict/bad"
+        predictor: "predict:BadPredictor"
         tags:
-          - sergiotejon
+          - bad
     version: 0.1.0
-  training: {}
+  training: { }
