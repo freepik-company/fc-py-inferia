@@ -1,72 +1,44 @@
+import logging
 import inspect
 
-from fastapi import Request, Response, Depends
-from pydantic import BaseModel
+from fastapi import Request
+from fastapi.responses import JSONResponse
+from inspect import signature, Parameter
+from typing import Callable, Any, get_type_hints
 
-from cogito.core.models import BasePredictor
-from cogito.core.utils import get_predictor_handler_params_type
-from cogito.core.exceptions import InvalidHandlerSignature
+from pydantic import Field, create_model, ValidationError
 
-async def health_check_handler(request: Request) -> Response:
-    return Response(
+
+async def health_check_handler(request: Request) -> JSONResponse:
+    return JSONResponse(
         content={"status": "ok"},
-        media_type="application/json",
     )
 
-def create_predictor_handler(predictor: BasePredictor):
 
-    param_type = get_predictor_handler_params_type(predictor)
-    if not issubclass(param_type, BaseModel):
-        raise InvalidHandlerSignature(f"Predict {predictor.__class__.__name__}")
-
-    async def handler(
-        request: param_type = Depends(),
-    ):
-        # Fixme convert request arguments to kwargs and pass them to the model
-        return predictor.predict(request)
-    handler.__annotations__ = {"return": Any}
-    return handler
-
-from inspect import signature, Parameter
-from functools import wraps
-from typing import Callable, Any, get_type_hints
-from pydantic import Field, create_model
-
-# Wrapper que crea un nuevo handler con anotaciones mejoradas
-def wrapper(original_handler: Callable):
+def validate_and_wrap_handler(class_name: str, original_handler: Callable) -> Callable:
     sig = signature(original_handler)
     type_hints = get_type_hints(original_handler)
 
-    # Crear un modelo Pydantic para los parámetros de entrada
     input_fields = {}
     for name, param in sig.parameters.items():
         param_type = type_hints.get(name, Any)
         default_value = param.default if param.default != Parameter.empty else ...
         input_fields[name] = (param_type, Field(default=default_value))
-    InputModel = create_model(f"{original_handler.__name__}Input", **input_fields)
-
-    # Tipo de salida
-    output_type = type_hints.get('return', Any)
+    InputModel = create_model(f"{class_name}.Input", **input_fields)
 
     # Check if the original handler is an async function
     if inspect.iscoroutinefunction(original_handler):
-        async def handler(*args, **kwargs):
-            # Validar entrada usando el modelo Pydantic
-            input_data = InputModel(**kwargs)
-            kwargs.update(input_data.model_dump())  # Actualizar con los datos validados
-            result = await original_handler(*args, **kwargs)
+        async def handler(input: InputModel):
+            result = await original_handler(**input.model_dump())
             return result
     else:
-        def handler(*args, **kwargs):
-            # Validar entrada usando el modelo Pydantic
-            input_data = InputModel(**kwargs)
-            kwargs.update(input_data.model_dump())  # Actualizar con los datos validados
-            result = original_handler(*args, **kwargs)
-            return result
+        def handler(input: InputModel):
+            return original_handler(**input.model_dump())
 
     # Añadir anotaciones al nuevo handler
     handler.__annotations__ = {
-        **{name: type_hints.get(name, Any) for name in sig.parameters},
-        'return': output_type,
+        "input": InputModel,
+        'return': type_hints.get("return", Any)
     }
+    logging.debug(f"Handler of {original_handler.__name__} annotated with {handler.__annotations__}")
     return handler

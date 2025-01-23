@@ -3,20 +3,16 @@ import os
 from typing import Dict
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 
 from cogito.core.exceptions import ConfigFileNotFoundError
 from cogito.core.models import BasePredictor
 from cogito.api.handlers import (
-    create_predictor_handler,
-    wrapper,
+    validate_and_wrap_handler,
     health_check_handler,
 )
-<<<<<<< Updated upstream
-from core.utils import get_predictor_handler_return_type
-=======
-from cogito.core.utils import get_response_base_model
->>>>>>> Stashed changes
 from cogito.core.config import ConfigFile
 from cogito.core.utils import load_predictor
 
@@ -74,25 +70,35 @@ class Application:
                 map_model_to_instance[route.predictor] = predictor
             else:
                 logging.info(f"Predictor {route.predictor} already loaded")
-
-            predictor_class = map_model_to_instance.get(route.predictor)
+            logging.debug(f"Adding route {route.path} with predictor {route.predictor}")
+            handler = validate_and_wrap_handler(
+                class_name=route.predictor,
+                original_handler=getattr(map_model_to_instance.get(route.predictor), "predict"),
+            )
 
             self.app.add_api_route(
                 route.path,
-<<<<<<< Updated upstream
-                create_predictor_handler(predictor_class),
-=======
-                # create_predictor_handler(map_model_to_instance.get(route.predictor)), #fixme Handle None
-                wrapper(
-                    getattr(map_model_to_instance.get(route.predictor), "predict")
-                ),
->>>>>>> Stashed changes
+                handler,
                 methods=["POST"],
                 name=route.name,
                 description=route.description,
                 tags=route.tags,
-                response_model=get_response_base_model(map_model_to_instance.get(route.predictor))
+                response_model=handler.__annotations__["return"],
             )
+
+        async def validation_exception_handler(request: Request, exc: RequestValidationError):
+            return JSONResponse(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content={
+                    "detail": "There is an error with the request parameters.",
+                    "errors": exc.errors(),
+                    "body": exc.body,
+                },
+            )
+        self.app.add_exception_handler(
+            RequestValidationError,
+            validation_exception_handler
+        )
 
     def run(self):
         uvicorn.run(

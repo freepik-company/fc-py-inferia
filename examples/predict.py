@@ -29,15 +29,19 @@ class Text2Image(BasePredictor):
     def setup(self):
         pass
 
+############################################################################################################
+
 class Image2Text(BasePredictor):
-    async def predict(self, *args, **kwargs) -> int:
+    async def predict(self, a, b) -> int:
         return 23
 
     def setup(self):
         pass
 
+############################################################################################################
+
 class STejon(BasePredictor):
-    def predict(self, prompt: str, elasticity: float) -> Any:
+    def predict(self, prompt: str, elasticity: float):
         return "No doy permisos de root"
 
     def setup(self):
