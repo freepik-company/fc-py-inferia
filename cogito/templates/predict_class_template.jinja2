@@ -30,9 +30,9 @@ class {{ route.class_name }}(BasePredictor):
         pass
 
     {% if route.class_data.args %}
-    def predict(self, {% for arg in route.class_data.args %}{{ arg.name }}: {{ arg.type }}{% if not loop.last %}, {% endif %}{% endfor %}) -> PredictResponse:
+    def predict(self, {% for arg in route.class_data.args %}{{ arg.name }}: {{ arg.type }}{% if not loop.last %}, {% endif %}{% endfor %}) -> {% if route.class_data.response %}{{ route.class_data.response.type }}{% else %}None{% endif %}:
     {% else %}
-    def predict(self, *args, **kwargs) -> PredictResponse:
+    def predict(self, *args, **kwargs) -> {% if route.class_data.response %}{{ route.class_data.response.type }}{% else %}None{% endif %}:
     {%- endif %}
         """
         This method is called for each prediction request.
