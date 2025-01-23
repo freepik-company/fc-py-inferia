@@ -1,5 +1,3 @@
-import os
-import sys
 import time
 from typing import Any
 
@@ -7,18 +5,10 @@ from pydantic import BaseModel
 
 from cogito import BasePredictor
 
-"""
-This is a pythonic way to import the Application class from the cogito package from examples folder without being
-a package itself. This is a common pattern in the Python world. 
-"""
-root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.insert(0, root_dir)
-
 
 class PredictResponse(BaseModel):
     image: str
     text: str
-
 
 class GoodPredictor(BasePredictor):
     def predict(self, *args, **kwargs) -> PredictResponse:
