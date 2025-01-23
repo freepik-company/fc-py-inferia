@@ -11,7 +11,7 @@ from cogito.api.handlers import (
 )
 from cogito.api.responses import ErrorResponse
 from cogito.core.config import ConfigFile
-from cogito.core.exceptions import ConfigFileNotFoundError
+from cogito.core.exceptions import ConfigFileNotFoundError, SetupError
 from cogito.core.logging import get_logger
 from cogito.core.models import BasePredictor
 from cogito.core.utils import get_predictor_handler_return_type, load_predictor
@@ -44,12 +44,25 @@ class Application:
         map_route_to_model: Dict[str, str] = {}
         map_model_to_instance: Dict[str, BasePredictor] = {}
 
+        def lifespan(app: FastAPI):
+            for predictor in map_model_to_instance.values():
+                try:
+                    predictor.setup()
+                except Exception as e:
+                    self._logger.critical("Unable to setting up predictor", extra={
+                        'predictor': predictor.__class__.__name__, 'error': e
+                    })
+                    raise SetupError(predictor.__class__.__name__, e)
+                
+            yield
+            
         self.app = FastAPI(
                 title=self.config.cogito.server.name,
                 version=self.config.cogito.server.version,
                 description=self.config.cogito.server.description,
                 access_log=self.config.cogito.server.fastapi.access_log,
                 debug=self.config.cogito.server.fastapi.debug,
+                lifespan=lifespan,
         )
 
         self.app.logger = self._logger
@@ -71,14 +84,6 @@ class Application:
             map_route_to_model[route.path] = route.predictor
             if route.predictor not in map_model_to_instance:
                 predictor = load_predictor(route.predictor)
-                try:
-                    predictor.setup()
-                except Exception as e:
-                    self._logger.critical("Unable to setting up predictor", extra={
-                        'predictor': route.predictor, 'error': e
-                    })
-                    raise  # fixme Use a custom exception
-
                 map_model_to_instance[route.predictor] = predictor
             else:
                 self._logger.info("Predictor class already loaded", extra={'predictor': route.predictor})
