@@ -1,6 +1,9 @@
-from typing import Any, Optional
+import os
+import sys
+import time
+from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from cogito import BasePredictor
 
@@ -8,41 +11,41 @@ from cogito import BasePredictor
 This is a pythonic way to import the Application class from the cogito package from examples folder without being
 a package itself. This is a common pattern in the Python world. 
 """
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, root_dir)
 
-class Text2ImageResponse(BaseModel):
+
+class PredictResponse(BaseModel):
     image: str
     text: str
 
-class Text2ImageRequest(BaseModel):
-    image: str = Field(..., description="Image URL")
-    scale: float = Field(... , description="Scale factor")
 
-class Text2Image(BasePredictor):
-    def predict(self,
-        text2image_request: Text2ImageRequest,
-    ) -> Text2ImageResponse:
-        return Text2ImageResponse(
-            image="https://example.com/image.jpg",
-            text="Hello world"
+class GoodPredictor(BasePredictor):
+    def predict(self, *args, **kwargs) -> PredictResponse:
+        return PredictResponse(
+                image="https://example.com/image.jpg",
+                text="Hello world"
         )
 
     def setup(self):
         pass
 
-############################################################################################################
 
-class Image2Text(BasePredictor):
-    async def predict(self, a, b) -> int:
-        return 23
+class DelayPredictor(BasePredictor):
+    def predict(self, *args, **kwargs) -> PredictResponse:
+        time.sleep(5)
+        return PredictResponse(
+                image="https://example.com/image.jpg",
+                text="Hello world"
+        )
 
     def setup(self):
         pass
 
-############################################################################################################
 
-class STejon(BasePredictor):
-    def predict(self, prompt: str, elasticity: float):
-        return "No doy permisos de root"
+class BadPredictor(BasePredictor):
+    def predict(self, *args, **kwargs) -> Any:
+        raise Exception("No doy permisos de root")
 
     def setup(self):
         pass

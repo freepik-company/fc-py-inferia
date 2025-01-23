@@ -1,9 +1,8 @@
-import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
+
 import yaml
 from pydantic import BaseModel
-from pydantic.v1 import BaseSettings
 
 from cogito.core.exceptions import ConfigFileNotFoundError
 
@@ -60,6 +59,7 @@ class ServerConfig(BaseModel):
             routes=[RouteConfig.default()]
         )
 
+
 class TrainingConfig(BaseModel):
     """
     Training configuration.
@@ -82,6 +82,7 @@ class CogitoConfig(BaseModel):
     def default(cls):
         return cls(server=ServerConfig.default(), training=TrainingConfig.default())
 
+
 class ConfigFile(BaseModel):
     """
     Configuration file.
@@ -93,17 +94,18 @@ class ConfigFile(BaseModel):
         return cls(cogito=CogitoConfig.default())
 
     @classmethod
+    def exists(cls, file_path: str) -> bool:
+        return Path(file_path).exists()
+
+    @classmethod
     def load_from_file(cls, file_path: str) -> "ConfigFile":
         try:
             with open(file_path, "r") as file:
                 yaml_data = yaml.safe_load(file)
             return cls(**yaml_data)
-        except Exception as e:
-            logging.error(f"Error loading config file: {file_path}: {e}")
+        except Exception:
             raise ConfigFileNotFoundError(file_path)
 
     def save_to_file(self, file_path: str) -> None:
         with open(file_path, "w") as file:
             yaml.dump(self.model_dump(), file)
-
-

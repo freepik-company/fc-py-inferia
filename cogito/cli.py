@@ -1,6 +1,6 @@
 import click
 
-from cogito.commands.initialize import initialize
+from cogito.commands.initialize import init
 
 
 @click.group()
@@ -10,7 +10,7 @@ Cogito CLI
     """
     pass
 
-cli.add_command(initialize)
+cli.add_command(init)
 
 
 if __name__ == "__main__":
