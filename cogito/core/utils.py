@@ -1,7 +1,7 @@
 import importlib
-from pathlib import Path
 from typing import Any
 
+from cogito.api.responses import ResultResponse
 from cogito.core.models import BasePredictor
 
 
@@ -23,4 +23,15 @@ def load_predictor(class_path) -> Any:
 
 def get_predictor_handler_return_type(predictor: BasePredictor):
     """This method returns the type of the output of the predictor.predict method"""
-    return predictor.predict.__annotations__["return"]
+    # Get the return type of the predictor.predict method
+    return_type = predictor.predict.__annotations__.get("return", None)
+
+    # Create a new dynamic type based on ResultResponse, with the correct module and annotated field
+    return type(
+            f"{predictor.__class__.__name__}Response",
+            (ResultResponse,),
+            {
+                "__annotations__": {"result": return_type},  # Annotate the result field with the return type
+                "__module__": ResultResponse.__module__,  # Ensure the module is set correctly for Pydantic
+            },
+    )
