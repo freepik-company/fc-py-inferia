@@ -32,3 +32,7 @@ update_changelog_on_bump = true
 version_files = [
     'setup.py:version',
 ]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]

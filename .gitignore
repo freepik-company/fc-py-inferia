@@ -8,3 +8,6 @@ __pycache__
 
 !.python-version
 !.gitignore
+
+
+*.egg-info

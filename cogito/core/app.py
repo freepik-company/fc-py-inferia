@@ -3,12 +3,14 @@ import os
 from typing import Any, Dict, Union
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 
 from cogito.api.handlers import (
-    create_predictor_handler,
     health_check_handler,
 )
+from cogito.core.utils import wrap_handler
 from cogito.api.responses import ErrorResponse
 from cogito.core.config import ConfigFile
 from cogito.core.exceptions import ConfigFileNotFoundError
@@ -83,20 +85,36 @@ class Application:
             else:
                 self._logger.info("Predictor class already loaded", extra={'predictor': route.predictor})
 
-            model = map_model_to_instance.get(route.predictor)
-            response_model = get_predictor_handler_return_type(model)
+
+            handler = wrap_handler(
+                class_name=route.predictor,
+                original_handler=getattr(map_model_to_instance.get(route.predictor), "predict"),
+            )
 
             self.app.add_api_route(
                     route.path,
-                    create_predictor_handler(model, response_model),  # fixme Handle None
+                    handler,
                     methods=["POST"],
                     name=route.name,
                     description=route.description,
                     tags=route.tags,
-                    response_model=response_model,
-                    responses={500: {"model": ErrorResponse}},
-
+                    response_model=handler.__annotations__["return"],
+                responses={500: {"model": ErrorResponse}},
             )
+
+        async def validation_exception_handler(request: Request, exc: RequestValidationError):
+            return JSONResponse(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content={
+                    "detail": "There is an error with the request parameters.",
+                    "errors": exc.errors(),
+                    "body": exc.body,
+                },
+            )
+        self.app.add_exception_handler(
+            RequestValidationError,
+            validation_exception_handler
+        )
 
     def run(self):
         uvicorn.run(
