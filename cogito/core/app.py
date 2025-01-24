@@ -95,8 +95,9 @@ class Application:
 
             handler = wrap_handler(
                 class_name=route.predictor,
-                original_handler=getattr(map_model_to_instance.get(route.predictor), "predict"),
-            )
+                original_handler=getattr(
+                    self.map_model_to_instance.get(route.predictor),
+                    "predict"))
 
             self.app.add_api_route(
                     route.path,
