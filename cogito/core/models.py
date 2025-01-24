@@ -8,5 +8,5 @@ class BasePredictor(ABC):
         pass
 
     @abstractmethod
-    def setup(self):
+    async def setup(self):
         pass

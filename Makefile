@@ -53,6 +53,16 @@ code-style-dirty: ## Check the code style but don't commit
 
 code-style: code-style-dirty ## Check the code style and commit the changes
 
+dev-dependencies: ## Install the development dependencies
+	@. .venv/bin/activate && uv pip install -e .
+	@. .venv/bin/activate && uv sync --dev
+
+dev-build: .venv dev-dependencies ## Build the development environment
+	echo "Development environment built"
+
+run-test: dev-dependencies ## Run the tests
+	@. .venv/bin/activate && python -m pytest
+
 ##@ PyPi commands
 
 install: setup.py ## Install the package
