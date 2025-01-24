@@ -40,7 +40,7 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/freepik-company/fc-py-cogito"
-Issues = "https://https://github.com/freepik-company/fc-py-cogito/issues"
+Issues = "https://github.com/freepik-company/fc-py-cogito/issues"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
