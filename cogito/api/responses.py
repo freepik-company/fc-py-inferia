@@ -1,7 +1,7 @@
 from typing import Any
 
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from starlette.responses import JSONResponse
 
 
 class ResultResponse(BaseModel):
