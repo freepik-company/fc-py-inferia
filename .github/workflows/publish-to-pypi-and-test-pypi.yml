@@ -96,8 +96,7 @@ jobs:
 
   publish-to-testpypi:
     name: Publish Python 🐍 distribution 📦 to TestPyPI
-    #if: github.ref == 'refs/heads/main'  # only publish to PyPI on pushes to main branch
-    if: github.ref == 'refs/heads/11-build-and-publish-cogito-as-a-pip-module'  # only publish to PyPI on pushes to develop branch
+    if: github.ref == 'refs/heads/main'  # only publish to PyPI on pushes to main branch
     needs:
     - build
     runs-on: ubuntu-latest
