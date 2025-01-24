@@ -48,6 +48,3 @@ tag_format = "$version"
 version_scheme = "pep440"
 version_provider = "pep621"
 update_changelog_on_bump = true
-version_files = [
-    'setup.py:version',
-]
