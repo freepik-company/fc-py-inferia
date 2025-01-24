@@ -8,3 +8,8 @@ class ConfigFileNotFoundError(Exception):
 class SetupError(Exception):
     def __init__(self, predictor: str, error: Exception):
         super().__init__(f"Unable to setup predictor {predictor}: {error}")
+
+
+class InvalidHandlerSignature(Exception):
+    def __init__(self, class_name: str):
+        super().__init__(class_name)

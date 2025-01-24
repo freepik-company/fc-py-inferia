@@ -1,5 +1,6 @@
 import click
 
+from cogito.commands.scaffold_predict import scaffold_predict_classes
 from cogito.core.config import CogitoConfig, ConfigFile, FastAPIConfig, RouteConfig, ServerConfig, TrainingConfig
 
 
@@ -61,11 +62,15 @@ def _init_prompted() -> ConfigFile:
 
 
 @click.command()
-@click.option("-c", "--config-path", type=str, default=".", help="The path to the configuration file")
+@click.option("-s", "--scaffold", is_flag=True, default=False, help="Create a scaffold predict class in predict.py")
 @click.option("-d", "--default", is_flag=True, default=False, help="Initialize with default values")
 @click.option("-f", "--force", is_flag=True, default=False, help="Force initialization, even if already initialized")
-def init(config_path: str = ".", default: bool = False, force: bool = False) -> None:
+@click.pass_context
+def init(ctx, scaffold: bool = False,  default: bool = False, force: bool = False) -> None:
     """ Initialize the project configuration """
+
+    config_path = ctx.obj['config_path']
+
     click.echo("Initializing...")
 
     if ConfigFile.exists(f"{config_path}/cogito.yaml") and not force:
@@ -76,6 +81,9 @@ def init(config_path: str = ".", default: bool = False, force: bool = False) -> 
         config = _init_with_default()
     else:
         config = _init_prompted()
+
+    if scaffold:
+        scaffold_predict_classes(config, force)
 
     config.save_to_file(f"{config_path}/cogito.yaml")
     click.echo("Initialized successfully.")

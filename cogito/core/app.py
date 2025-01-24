@@ -5,18 +5,27 @@ from contextlib import asynccontextmanager
 from typing import Any, Dict, Union
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 
 from cogito.api.handlers import (
-    create_predictor_handler,
     health_check_handler,
 )
+from cogito.core.utils import wrap_handler
 from cogito.api.responses import ErrorResponse
 from cogito.core.config import ConfigFile
-from cogito.core.exceptions import ConfigFileNotFoundError, SetupError
+from cogito.core.exceptions import (
+    ConfigFileNotFoundError,
+    SetupError,
+)
 from cogito.core.logging import get_logger
 from cogito.core.models import BasePredictor
-from cogito.core.utils import get_predictor_handler_return_type, load_predictor
+from cogito.core.utils import (
+    get_predictor_handler_return_type,
+    load_predictor,
+)
+from examples.fastapi_sandbox import lifespan
 
 
 class Application:
@@ -28,6 +37,7 @@ class Application:
             config_file_path: str = ".",
             logger: Union[Any, logging.Logger] = None,
     ):
+
         self._logger = logger or Application._get_default_logger()
 
         try:
@@ -49,12 +59,12 @@ class Application:
             yield
 
         self.app = FastAPI(
-            title=self.config.cogito.server.name,
-            version=self.config.cogito.server.version,
-            description=self.config.cogito.server.description,
-            access_log=self.config.cogito.server.fastapi.access_log,
-            debug=self.config.cogito.server.fastapi.debug,
-            lifespan=lifespan
+                title=self.config.cogito.server.name,
+                version=self.config.cogito.server.version,
+                description=self.config.cogito.server.description,
+                access_log=self.config.cogito.server.fastapi.access_log,
+                debug=self.config.cogito.server.fastapi.debug,
+                lifespan=lifespan,
         )
         self.app.state.ready = False
 
@@ -82,20 +92,36 @@ class Application:
             else:
                 self._logger.info("Predictor class already loaded", extra={'predictor': route.predictor})
 
-            model = self.map_model_to_instance.get(route.predictor)
-            response_model = get_predictor_handler_return_type(model)
+
+            handler = wrap_handler(
+                class_name=route.predictor,
+                original_handler=getattr(map_model_to_instance.get(route.predictor), "predict"),
+            )
 
             self.app.add_api_route(
                     route.path,
-                    create_predictor_handler(model, response_model),  # fixme Handle None
+                    handler,
                     methods=["POST"],
                     name=route.name,
                     description=route.description,
                     tags=route.tags,
-                    response_model=response_model,
-                    responses={500: {"model": ErrorResponse}},
-
+                    response_model=handler.__annotations__["return"],
+                responses={500: {"model": ErrorResponse}},
             )
+
+        async def validation_exception_handler(request: Request, exc: RequestValidationError):
+            return JSONResponse(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content={
+                    "detail": "There is an error with the request parameters.",
+                    "errors": exc.errors(),
+                    "body": exc.body,
+                },
+            )
+        self.app.add_exception_handler(
+            RequestValidationError,
+            validation_exception_handler
+        )
 
     async def setup(self, app: FastAPI):
         self._logger.info("Setting up application", extra={})

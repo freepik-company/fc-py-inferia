@@ -6,6 +6,14 @@ from pydantic import BaseModel
 
 from cogito.core.exceptions import ConfigFileNotFoundError
 
+class ArgConfig(BaseModel):
+    name: str
+    type: str
+    description: Optional[str] = None
+
+class ResponseConfig(BaseModel):
+    type: str
+    description: Optional[str] = None
 
 class RouteConfig(BaseModel):
     """
@@ -15,6 +23,8 @@ class RouteConfig(BaseModel):
     description: Optional[str] = None
     path: str
     predictor: str
+    args: Optional[List["ArgConfig"]] = None
+    response: Optional["ResponseConfig"] = None
     tags: List[str] = List
 
     @classmethod
@@ -24,6 +34,8 @@ class RouteConfig(BaseModel):
                 description='Make a single prediction',
                 path='/v1/predict',
                 predictor='predict:Predictor',
+                args=[ArgConfig(name='prompt', type='str', description='The prompt to generate text from')],
+                response=ResponseConfig(type='PredictResponse', description='The generated text'),
                 tags=['predict']
         )
 
@@ -52,11 +64,11 @@ class ServerConfig(BaseModel):
     @classmethod
     def default(cls):
         return cls(
-                name='Cogito ergo infero',
-                description='Inference server',
-                version='0.1.0',
-                fastapi=FastAPIConfig.default(),
-                routes=[RouteConfig.default()]
+            name='Cogito ergo infero',
+            description='Inference server',
+            version='0.1.0',
+            fastapi=FastAPIConfig.default(),
+            routes=[RouteConfig.default()]
         )
 
 
@@ -103,8 +115,10 @@ class ConfigFile(BaseModel):
             with open(file_path, "r") as file:
                 yaml_data = yaml.safe_load(file)
             return cls(**yaml_data)
-        except Exception:
+        except FileNotFoundError:
             raise ConfigFileNotFoundError(file_path)
+        except Exception:
+            raise ValueError(f"Error loading configuration file {file_path}")
 
     def save_to_file(self, file_path: str) -> None:
         with open(file_path, "w") as file:
