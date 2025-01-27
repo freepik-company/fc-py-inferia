@@ -52,3 +52,6 @@ update_changelog_on_bump = true
 [tool.pytest.ini_options]
 minversion = "8.0"
 testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+"inferia" = ["templates/*"]
