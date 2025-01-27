@@ -339,7 +339,7 @@ wheels = [
 
 [[package]]
 name = "cogito"
-version = "0.0.0"
+version = "0.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "build" },
@@ -357,10 +357,12 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "black" },
+    { name = "build" },
     { name = "flake8" },
     { name = "jupyter" },
     { name = "pytest" },
     { name = "setuptools" },
+    { name = "wheel" },
 ]
 
 [package.metadata]
@@ -380,10 +382,12 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "black", specifier = ">=24.10.0" },
+    { name = "build", specifier = ">=1.2.2.post1" },
     { name = "flake8", specifier = ">=7.1.1" },
     { name = "jupyter", specifier = ">=1.1.1" },
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "setuptools", specifier = ">=75.6.0" },
+    { name = "wheel", specifier = ">=0.45.1" },
 ]
 
 [[package]]
