@@ -52,3 +52,6 @@ update_changelog_on_bump = true
 [tool.pytest.ini_options]
 minversion = "8.0"
 testpaths = ["tests"]
+
+[project.scripts]
+inferia-cli = "inferia.cli:main"
