@@ -330,7 +330,7 @@ name = "click"
 version = "8.1.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "colorama", marker = "platform_system == 'Windows'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b9/2e/0090cbf739cee7d23781ad4b89a9894a41538e4fcf4c31dcdd705b78eb8b/click-8.1.8.tar.gz", hash = "sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a", size = 226593 }
 wheels = [
@@ -342,16 +342,13 @@ name = "cogito"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
-    { name = "build" },
     { name = "click" },
     { name = "fastapi" },
     { name = "jinja2" },
     { name = "pydantic" },
     { name = "pyyaml" },
-    { name = "setuptools" },
     { name = "structlog" },
     { name = "uvicorn" },
-    { name = "wheel" },
 ]
 
 [package.dev-dependencies]
@@ -367,16 +364,13 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "build", specifier = ">=1.2.2.post1" },
     { name = "click", specifier = ">=8.1.8" },
     { name = "fastapi", specifier = ">=0.115.6" },
     { name = "jinja2", specifier = ">=3.1.5" },
     { name = "pydantic", specifier = ">=2.10.5" },
     { name = "pyyaml", specifier = ">=6.0.2" },
-    { name = "setuptools", specifier = ">=75.8.0" },
     { name = "structlog", specifier = ">=25.1.0" },
     { name = "uvicorn", specifier = ">=0.34.0" },
-    { name = "wheel", specifier = ">=0.45.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -590,7 +584,7 @@ name = "ipykernel"
 version = "6.29.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "appnope", marker = "sys_platform == 'darwin'" },
+    { name = "appnope", marker = "platform_system == 'Darwin'" },
     { name = "comm" },
     { name = "debugpy" },
     { name = "ipython" },
