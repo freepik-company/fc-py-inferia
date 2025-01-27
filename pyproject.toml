@@ -54,4 +54,4 @@ minversion = "8.0"
 testpaths = ["tests"]
 
 [project.scripts]
-inferia = "inferia.cli:main"
+inferia-cli = "inferia.cli:main"

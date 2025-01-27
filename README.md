@@ -69,24 +69,24 @@ Command: `init`
 #### Usage:
 
 ```bash
-python -m inferia init [OPTIONS]
+inferia-cli init [OPTIONS]
 ```
 
 **Examples:**
 
 1. Initialize with prompts:
    ```bash
-   python -m inferia init
+   inferia-cli init
    ```
 
 2. Initialize with default values:
    ```bash
-   python -m inferia init --default
+   inferia-cli init --default
    ```
 
 3. Initialize and scaffold prediction classes:
    ```bash
-   python -m inferia init --scaffold
+   inferia-cli init --scaffold
    ```
 
 ---
@@ -104,19 +104,19 @@ Command: `scaffold`
 #### Usage:
 
 ```bash
-python -m inferia scaffold [OPTIONS]
+inferia-cli scaffold [OPTIONS]
 ```
 
 **Examples:**
 
 1. Scaffold prediction classes:
    ```bash
-   python -m inferia scaffold
+   inferia-cli scaffold
    ```
 
 2. Scaffold and overwrite existing files:
    ```bash
-   python -m inferia scaffold --force
+   inferia-cli scaffold --force
    ```
 
 ---
@@ -130,14 +130,14 @@ Command: `run`
 #### Usage:
 
 ```bash
-python -m inferia run
+inferia-cli run
 ```
 
 **Example:**
 
 1. Run the application:
    ```bash
-   python -m inferia run
+   inferia-cli run
    ```
 
 This will:
