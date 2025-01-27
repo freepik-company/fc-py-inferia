@@ -26,5 +26,10 @@ cli.add_command(init)
 cli.add_command(scaffold)
 cli.add_command(run)
 
-if __name__ == "__main__":
+
+def main():
     cli(obj={})
+
+
+if __name__ == "__main__":
+    main()
