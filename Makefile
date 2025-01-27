@@ -30,7 +30,7 @@ check-twine:
 build: .venv dependencies-install ## Build the local development environment
 
 build-dev: build dependencies-dev-install ## Build the development environment
-	echo "Development environment built"
+	@echo "Development environment built successfully."
 
 git-prune: ## Prune the git repository
 	@git branch --format '%(refname:short) %(upstream:track)' | \
@@ -70,20 +70,23 @@ run-test: dev-dependencies ## Run the tests
 ##@ PyPi commands
 
 install: ## Install the package
-	pip install -e .
+	@pip install -e .
 
 dist: ## Build the distribution
-	python -m build
+	@python -m build
 
 upload: dist ## Upload the distribution
-	twine upload \
+	@twine upload \
 		--repository ${REPOSITORY} \
 		dist/*
 
 ##@ Clean commands
 clean: ## Clean the project
-	rm -rf dist build *.egg-info
+	@rm -rf dist build *.egg-info
+
+mr-proper: clean ## Clean the project and the virtual environment
+	@rm -rf .venv
 
 ##@ Pre-commit commands
 pre-commit-install: ## Install pre-commit hooks
-	pre-commit install
+	@pre-commit install
