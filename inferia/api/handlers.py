@@ -4,8 +4,8 @@ from typing import Any
 from fastapi import Request
 from starlette.responses import JSONResponse
 
-from cogito.api.responses import ErrorResponse, ResultResponse
-from cogito.core.models import BasePredictor
+from inferia.api.responses import ErrorResponse, ResultResponse
+from inferia.core.models import BasePredictor
 
 
 async def health_check_handler(request: Request) -> JSONResponse:

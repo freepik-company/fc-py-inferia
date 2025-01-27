@@ -4,7 +4,7 @@ from typing import List, Optional
 import yaml
 from pydantic import BaseModel
 
-from cogito.core.exceptions import ConfigFileNotFoundError
+from inferia.core.exceptions import ConfigFileNotFoundError
 
 
 class ArgConfig(BaseModel):
@@ -77,9 +77,9 @@ class ServerConfig(BaseModel):
     @classmethod
     def default(cls):
         return cls(
-            name="Cogito ergo infero",
-            description="Inference server",
-            version="0.1.0",
+            name='Sapientia per Inferentiam',
+            description='Inference server',
+            version='0.1.0',
             fastapi=FastAPIConfig.default(),
             routes=[RouteConfig.default()],
         )
@@ -97,9 +97,9 @@ class TrainingConfig(BaseModel):
         return cls()
 
 
-class CogitoConfig(BaseModel):
+class InferiaConfig(BaseModel):
     """
-    Cogito configuration.
+    Inferia configuration.
     """
 
     server: ServerConfig
@@ -115,11 +115,11 @@ class ConfigFile(BaseModel):
     Configuration file.
     """
 
-    cogito: CogitoConfig
+    inferia: InferiaConfig
 
     @classmethod
     def default(cls):
-        return cls(cogito=CogitoConfig.default())
+        return cls(inferia=InferiaConfig.default())
 
     @classmethod
     def exists(cls, file_path: str) -> bool:

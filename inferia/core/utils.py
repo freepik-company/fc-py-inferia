@@ -6,8 +6,8 @@ from typing import Any, Callable, get_type_hints
 
 from pydantic import create_model, Field
 
-from cogito.api.responses import ResultResponse
-from cogito.core.models import BasePredictor
+from inferia.api.responses import ResultResponse
+from inferia.core.models import BasePredictor
 
 
 def load_predictor(class_path) -> Any:
