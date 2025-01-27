@@ -1,4 +1,4 @@
-.PHONY: all help help-variablesl install dist upload clean
+.PHONY: all help help-variables install dist upload clean
 
 PYTHON_VERSION ?= 3.10
 REPOSITORY?=testpypi
