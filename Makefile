@@ -45,10 +45,17 @@ git-prune: ## Prune the git repository
 	fi
 	@rm .branches_to_delete
 
-code-style-dirty: ## Check the code style but don't commit
-	@. .venv/bin/activate && uv black --check .
+code-style-check: ## Checks the code style.
+	@. .venv/bin/activate && black --check .
+
+code-style-dirty: ## Fixes the code style but does not commit the changes
+	@. .venv/bin/activate && black .
 
 code-style: code-style-dirty ## Check the code style and commit the changes
+	@git commit -am "style: fix code style"
+
+pre-commit-install: ## Install pre-commit hooks
+	@pre-commit install
 
 ##@ Dependencies management commands
 
@@ -87,6 +94,3 @@ clean: ## Clean the project
 mr-proper: clean ## Clean the project and the virtual environment
 	@rm -rf .venv
 
-##@ Pre-commit commands
-pre-commit-install: ## Install pre-commit hooks
-	@pre-commit install
