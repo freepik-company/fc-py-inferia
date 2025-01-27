@@ -48,10 +48,14 @@ dependencies-compile: ## Compile the dependencies
 dependencies-install: ## Install the dependencies
 	@. .venv/bin/activate && uv sync
 
-code-style-dirty: ## Check the code style but don't commit
-	@. .venv/bin/activate && uv black --check .
+code-style-check: ## Checks the code style.
+	@. .venv/bin/activate && black --check .
+
+code-style-dirty: ## Fixes the code style but does not commit the changes
+	@. .venv/bin/activate && black .
 
 code-style: code-style-dirty ## Check the code style and commit the changes
+	@git commit -am "style: fix code style"
 
 dev-dependencies: ## Install the development dependencies
 	@. .venv/bin/activate && uv pip install -e .
