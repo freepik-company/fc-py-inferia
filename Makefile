@@ -57,7 +57,7 @@ dev-dependencies: ## Install the development dependencies
 	@. .venv/bin/activate && uv pip install -e .
 	@. .venv/bin/activate && uv sync --dev
 
-dev-build: .venv dev-dependencies ## Build the development environment
+dev-build: .venv dev-dependencies pre-commit-install ## Build the development environment
 	echo "Development environment built"
 
 run-test: dev-dependencies ## Run the tests
@@ -79,3 +79,7 @@ upload: dist ## Upload the distribution
 ##@ Clean commands
 clean: ## Clean the project
 	rm -rf dist build *.egg-info
+
+##@ Pre-commit commands
+pre-commit-install: ## Install pre-commit hooks
+	pre-commit install
