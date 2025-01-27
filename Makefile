@@ -65,7 +65,7 @@ run-test: dev-dependencies ## Run the tests
 
 ##@ PyPi commands
 
-install: setup.py ## Install the package
+install: ## Install the package
 	pip install -e .
 
 dist: ## Build the distribution

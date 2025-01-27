@@ -9,19 +9,19 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
-from cogito.api.handlers import (
+from inferia.api.handlers import (
     health_check_handler,
 )
-from cogito.core.utils import wrap_handler
-from cogito.api.responses import ErrorResponse
-from cogito.core.config import ConfigFile
-from cogito.core.exceptions import (
+from inferia.core.utils import wrap_handler
+from inferia.api.responses import ErrorResponse
+from inferia.core.config import ConfigFile
+from inferia.core.exceptions import (
     ConfigFileNotFoundError,
     SetupError,
 )
-from cogito.core.logging import get_logger
-from cogito.core.models import BasePredictor
-from cogito.core.utils import (
+from inferia.core.logging import get_logger
+from inferia.core.models import BasePredictor
+from inferia.core.utils import (
     get_predictor_handler_return_type,
     load_predictor,
 )
@@ -43,7 +43,7 @@ class Application:
         try:
             self.config = ConfigFile.load_from_file(
                     os.path.join(
-                            f"{config_file_path}/cogito.yaml"
+                            f"{config_file_path}/inferia.yaml"
                     )
             )
         except ConfigFileNotFoundError as e:
@@ -59,11 +59,11 @@ class Application:
             yield
 
         self.app = FastAPI(
-                title=self.config.cogito.server.name,
-                version=self.config.cogito.server.version,
-                description=self.config.cogito.server.description,
-                access_log=self.config.cogito.server.fastapi.access_log,
-                debug=self.config.cogito.server.fastapi.debug,
+                title=self.config.inferia.server.name,
+                version=self.config.inferia.server.version,
+                description=self.config.inferia.server.description,
+                access_log=self.config.inferia.server.fastapi.access_log,
+                debug=self.config.inferia.server.fastapi.debug,
                 lifespan=lifespan,
         )
         self.app.state.ready = False
@@ -83,7 +83,7 @@ class Application:
         map_route_to_model: Dict[str, str] = {}
         self.map_model_to_instance: Dict[str, BasePredictor] = {}
 
-        for route in self.config.cogito.server.routes:
+        for route in self.config.inferia.server.routes:
             self._logger.info("Adding route", extra={'route': route})
             map_route_to_model[route.path] = route.predictor
             if route.predictor not in self.map_model_to_instance:
@@ -140,10 +140,10 @@ class Application:
     def run(self):
         uvicorn.run(
                 self.app,
-                host=self.config.cogito.server.fastapi.host,
-                port=self.config.cogito.server.fastapi.port
+                host=self.config.inferia.server.fastapi.host,
+                port=self.config.inferia.server.fastapi.port
         )
 
     @classmethod
     def _get_default_logger(cls):
-        return get_logger("cogito.app")
+        return get_logger("inferia.app")

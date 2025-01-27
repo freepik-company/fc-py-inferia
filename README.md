@@ -1,8 +1,8 @@
-# Freepik Company cogito
+# Freepik Company inferia
 
-Cogito is a versatile Python module aimed at simplifying the development and deployment of inference services. 
+Inferia is a versatile Python module aimed at simplifying the development and deployment of inference services. 
 It allows users to wrap machine learning models or any computational logic into APIs effortlessly. 
-With Cogito, you can focus on your core algorithmic functionality while the module takes care of the heavy lifting, 
+With inferia, you can focus on your core algorithmic functionality while the module takes care of the heavy lifting, 
 including API structure, request handling, error management, and scalability.
 
 Key features include:
@@ -25,7 +25,7 @@ make build
 ### Using pip
 Then, you can install the package:
 ```sh
-pip install cogito
+pip install inferia
 ```
 
 ## Run example application

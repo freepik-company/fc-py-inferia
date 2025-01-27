@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cogito"
+name = "inferia"
 version = "0.0.1"
-description = "Cogito is a Python module designed to streamline the creation and deployment of inference services. It provides tools and abstractions to wrap machine learning models and expose them as robust, production-ready APIs with minimal effort."
+description = "Inferia is a Python module designed to streamline the creation and deployment of inference services. It provides tools and abstractions to wrap machine learning models and expose them as robust, production-ready APIs with minimal effort."
 authors = [
     {name = "freepik-company/tech-avengers", email = "aivengers@freepik.com"}
 ]
@@ -39,8 +39,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/freepik-company/fc-py-cogito"
-Issues = "https://github.com/freepik-company/fc-py-cogito/issues"
+Homepage = "https://github.com/freepik-company/fc-py-inferia"
+Issues = "https://github.com/freepik-company/fc-py-inferia/issues"
 
 [tool.commitizen]
 name = "cz_conventional_commits"

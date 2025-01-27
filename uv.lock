@@ -347,55 +347,6 @@ wheels = [
 ]
 
 [[package]]
-name = "cogito"
-version = "0.0.1"
-source = { editable = "." }
-dependencies = [
-    { name = "click" },
-    { name = "fastapi" },
-    { name = "jinja2" },
-    { name = "pydantic" },
-    { name = "pyyaml" },
-    { name = "structlog" },
-    { name = "uvicorn" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "black" },
-    { name = "build" },
-    { name = "flake8" },
-    { name = "jupyter" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "setuptools" },
-    { name = "wheel" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "click", specifier = ">=8.1.8" },
-    { name = "fastapi", specifier = ">=0.115.6" },
-    { name = "jinja2", specifier = ">=3.1.5" },
-    { name = "pydantic", specifier = ">=2.10.5" },
-    { name = "pyyaml", specifier = ">=6.0.2" },
-    { name = "structlog", specifier = ">=25.1.0" },
-    { name = "uvicorn", specifier = ">=0.34.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "black", specifier = ">=24.10.0" },
-    { name = "build", specifier = ">=1.2.2.post1" },
-    { name = "flake8", specifier = ">=7.1.1" },
-    { name = "jupyter", specifier = ">=1.1.1" },
-    { name = "pre-commit", specifier = ">=4.1.0" },
-    { name = "pytest", specifier = ">=8.3.4" },
-    { name = "setuptools", specifier = ">=75.6.0" },
-    { name = "wheel", specifier = ">=0.45.1" },
-]
-
-[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -606,6 +557,53 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/33/08/c1395a292bb23fd03bdf572a1357c5a733d3eecbab877641ceacab23db6e/importlib_metadata-8.6.1.tar.gz", hash = "sha256:310b41d755445d74569f993ccfc22838295d9fe005425094fad953d7f15c8580", size = 55767 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/79/9d/0fb148dc4d6fa4a7dd1d8378168d9b4cd8d4560a6fbf6f0121c5fc34eb68/importlib_metadata-8.6.1-py3-none-any.whl", hash = "sha256:02a89390c1e15fdfdc0d7c6b25cb3e62650d0494005c97d6f148bf5b9787525e", size = 26971 },
+]
+
+[[package]]
+name = "inferia"
+version = "0.0.1"
+source = { editable = "." }
+dependencies = [
+    { name = "click" },
+    { name = "fastapi" },
+    { name = "jinja2" },
+    { name = "pydantic" },
+    { name = "pyyaml" },
+    { name = "structlog" },
+    { name = "uvicorn" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "black" },
+    { name = "build" },
+    { name = "flake8" },
+    { name = "jupyter" },
+    { name = "pytest" },
+    { name = "setuptools" },
+    { name = "wheel" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "click", specifier = ">=8.1.8" },
+    { name = "fastapi", specifier = ">=0.115.6" },
+    { name = "jinja2", specifier = ">=3.1.5" },
+    { name = "pydantic", specifier = ">=2.10.5" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "structlog", specifier = ">=25.1.0" },
+    { name = "uvicorn", specifier = ">=0.34.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "black", specifier = ">=24.10.0" },
+    { name = "build", specifier = ">=1.2.2.post1" },
+    { name = "flake8", specifier = ">=7.1.1" },
+    { name = "jupyter", specifier = ">=1.1.1" },
+    { name = "pytest", specifier = ">=8.3.4" },
+    { name = "setuptools", specifier = ">=75.6.0" },
+    { name = "wheel", specifier = ">=0.45.1" },
 ]
 
 [[package]]

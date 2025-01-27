@@ -7,7 +7,7 @@
 - update init command for both default/prompted values and forced initialization (#21)
 - Adds inspection of predict return type  (#18)
 - handling predictor initialization (#13)
-- **config.py**: Handles NotFileFound if cogito.yaml not found (#15)
+- **config.py**: Handles NotFileFound if inferia.yaml not found (#15)
 - add default healtcheck endpoint (#4)
 - add config file management (#5)
 - add app class to initialize (#3)
@@ -15,7 +15,7 @@
 
 ### Fix
 
-- **cogito/core/app.py**:  re-import correct module for get_predictor_handler_return_type (#19)
+- **inferia/core/app.py**:  re-import correct module for get_predictor_handler_return_type (#19)
 - **config.py**: Fixes bug in load_from_file exception handling (#16)
 
 ### Refactor
