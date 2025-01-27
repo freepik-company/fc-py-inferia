@@ -561,7 +561,7 @@ wheels = [
 
 [[package]]
 name = "inferia"
-version = "0.0.1"
+version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
@@ -579,6 +579,7 @@ dev = [
     { name = "build" },
     { name = "flake8" },
     { name = "jupyter" },
+    { name = "pre-commit" },
     { name = "pytest" },
     { name = "setuptools" },
     { name = "wheel" },
@@ -601,6 +602,7 @@ dev = [
     { name = "build", specifier = ">=1.2.2.post1" },
     { name = "flake8", specifier = ">=7.1.1" },
     { name = "jupyter", specifier = ">=1.1.1" },
+    { name = "pre-commit", specifier = ">=4.1.0" },
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "setuptools", specifier = ">=75.6.0" },
     { name = "wheel", specifier = ">=0.45.1" },
