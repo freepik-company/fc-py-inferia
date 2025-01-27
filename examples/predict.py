@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from cogito import BasePredictor
+from inferia import BasePredictor
 
 
 class PredictResponse(BaseModel):

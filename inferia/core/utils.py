@@ -6,9 +6,9 @@ from typing import Any, Callable, get_type_hints
 
 from pydantic import Field, create_model
 
-from cogito.api.responses import ResultResponse
-from cogito.core.models import BasePredictor
-from cogito.core.exceptions import InvalidHandlerSignature
+from inferia.api.responses import ResultResponse
+from inferia.core.models import BasePredictor
+from inferia.core.exceptions import InvalidHandlerSignature
 
 
 def load_predictor(class_path) -> Any:

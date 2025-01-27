@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/cogito/
+      url: https://pypi.org/project/inferia/
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
     steps:
@@ -103,7 +103,7 @@ jobs:
 
     environment:
       name: testpypi
-      url: https://test.pypi.org/project/cogito/
+      url: https://test.pypi.org/project/inferia/
 
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing

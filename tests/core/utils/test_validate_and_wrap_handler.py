@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from cogito.core.utils import wrap_handler
+from inferia.core.utils import wrap_handler
 
 def test_validate_handler_str_input_str_output():
     class MockPredictor:

@@ -1,4 +1,4 @@
-cogito:
+inferia:
   server:
     description: Inference server
     fastapi:
@@ -6,7 +6,7 @@ cogito:
       debug: false
       host: 127.0.0.1
       port: 8000
-    name: Cogito ergo infero
+    name: Sapientia per Inferentiam
     routes:
       - name: Good Predictor
         description: Simulates a good predictions, with results.

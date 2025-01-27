@@ -12,3 +12,4 @@ dist
 !.python-version
 !.gitignore
 !.github
+!.pre-commit-config.yaml

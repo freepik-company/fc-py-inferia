@@ -69,7 +69,7 @@ run-test: dev-dependencies ## Run the tests
 
 ##@ PyPi commands
 
-install: setup.py ## Install the package
+install: ## Install the package
 	pip install -e .
 
 dist: ## Build the distribution
@@ -83,3 +83,7 @@ upload: dist ## Upload the distribution
 ##@ Clean commands
 clean: ## Clean the project
 	rm -rf dist build *.egg-info
+
+##@ Pre-commit commands
+pre-commit-install: ## Install pre-commit hooks
+	pre-commit install
