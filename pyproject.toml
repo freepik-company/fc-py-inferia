@@ -55,3 +55,6 @@ testpaths = ["tests"]
 
 [tool.setuptools.package-data]
 "inferia" = ["templates/*"]
+
+[project.scripts]
+inferia-cli = "inferia.cli:main"
