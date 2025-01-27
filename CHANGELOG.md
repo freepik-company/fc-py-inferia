@@ -1,3 +1,17 @@
+## 0.1.2b0 (2025-01-27)
+
+### Feat
+
+- **cli**: adds run cli command (#35)
+
+## 0.1.2a0 (2025-01-27)
+
+## 0.1.1 (2025-01-27)
+
+### Fix
+
+- input model name for http request (#36)
+
 ## 0.1.0 (2025-01-27)
 
 ### Feat

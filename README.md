@@ -35,6 +35,111 @@ cd examples
 python app.py
 ```
 
-## Usage
+## Usage Guide: Inferia CLI
 
-*Put here any information about how to use this amazing library*
+The **Inferia CLI** provides several commands to initialize, scaffold, and run your inference-based projects. This guide explains the available commands and their options.
+
+---
+
+## CLI Reference
+
+- [Commands](#commands)
+  - [Initialize](#initialize)
+  - [Scaffold](#scaffold)
+  - [Run](#run)
+
+---
+
+
+### Initialize
+
+Command: `init`
+
+**Description:** Initialize the project configuration with default or custom settings.
+
+#### Options:
+
+- `-s, --scaffold`: Generate a scaffold prediction class during initialization.
+- `-d, --default`: Initialize with default values without prompts.
+- `-f, --force`: Force initialization even if a configuration file already exists.
+
+#### Usage:
+
+```bash
+inferia-cli init [OPTIONS]
+```
+
+**Examples:**
+
+1. Initialize with prompts:
+   ```bash
+   inferia-cli init
+   ```
+
+2. Initialize with default values:
+   ```bash
+   inferia-cli init --default
+   ```
+
+3. Initialize and scaffold prediction classes:
+   ```bash
+   inferia-cli init --scaffold
+   ```
+
+---
+
+### Scaffold
+
+Command: `scaffold`
+
+**Description:** Generate prediction class files based on the routes defined in the configuration file (`inferia.yaml`).
+
+#### Options:
+
+- `-f, --force`: Overwrite existing files if they already exist.
+
+#### Usage:
+
+```bash
+inferia-cli scaffold [OPTIONS]
+```
+
+**Examples:**
+
+1. Scaffold prediction classes:
+   ```bash
+   inferia-cli scaffold
+   ```
+
+2. Scaffold and overwrite existing files:
+   ```bash
+   inferia-cli scaffold --force
+   ```
+
+---
+
+### Run
+
+Command: `run`
+
+**Description:** Run the Inferia application based on the configuration in the specified directory.
+
+#### Usage:
+
+```bash
+inferia-cli [-c context] run
+```
+
+**Example:**
+
+1. Run the inferia application located in `examples` directory:
+   ```bash
+   inferia-cli -c examples run
+   ```
+
+This will:
+- Change the current working directory to the configuration path.
+- Load the application based on the `inferia.yaml` file.
+- Start the FastAPI server for your inference service.
+
+---

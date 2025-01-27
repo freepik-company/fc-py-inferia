@@ -2,6 +2,7 @@ import click
 
 from inferia.commands.initialize import init
 from inferia.commands.scaffold_predict import scaffold
+from inferia.commands.run import run
 
 
 @click.group()
@@ -23,6 +24,12 @@ def cli(ctx, config_path: str = ".") -> None:
 
 cli.add_command(init)
 cli.add_command(scaffold)
+cli.add_command(run)
+
+
+def main():
+    cli(obj={})
+
 
 if __name__ == "__main__":
-    cli(obj={})
+    main()
