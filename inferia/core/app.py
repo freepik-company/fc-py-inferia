@@ -21,11 +21,7 @@ from inferia.core.exceptions import (
 )
 from inferia.core.logging import get_logger
 from inferia.core.models import BasePredictor
-from inferia.core.utils import (
-    get_predictor_handler_return_type,
-    load_predictor,
-    wrap_handler,
-)
+from inferia.core.utils import load_predictor, wrap_handler
 
 
 class Application:
