@@ -127,14 +127,14 @@ Command: `run`
 #### Usage:
 
 ```bash
-inferia-cli run
+inferia-cli [-c context] run
 ```
 
 **Example:**
 
-1. Run the application:
+1. Run the inferia application located in `examples` directory:
    ```bash
-   inferia-cli run
+   inferia-cli -c examples run
    ```
 
 This will:
