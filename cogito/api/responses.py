@@ -14,7 +14,4 @@ class ErrorResponse(BaseModel):
     message: str
 
     def to_json_response(self) -> JSONResponse:
-        return JSONResponse(
-                status_code=500,
-                content=self.model_dump()
-        )
+        return JSONResponse(status_code=500, content=self.model_dump())

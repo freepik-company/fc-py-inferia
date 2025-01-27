@@ -57,10 +57,9 @@ async def lifespan(app: CustomFastAPI):
 
     yield
 
+
 # Crear instancia de la clase personalizada
-app = CustomFastAPI(
-    lifespan=lifespan
-)
+app = CustomFastAPI(lifespan=lifespan)
 
 
 @app.get("/healthz")
@@ -71,12 +70,8 @@ async def healthz():
     - 400 si la aplicación aún no está lista.
     """
     if app.state.ready:
-        return JSONResponse(
-            {"status": "OK"}
-        )
-    return JSONResponse(
-        {"status": "Initializing"}, 400
-    )
+        return JSONResponse({"status": "OK"})
+    return JSONResponse({"status": "Initializing"}, 400)
 
 
 async def initialize_app(app: CustomFastAPI):
@@ -93,8 +88,7 @@ async def initialize_app(app: CustomFastAPI):
         sys.exit(1)  # Apagar la aplicación si falla la inicialización
 
 
-
-
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="127.0.0.1", port=8000)

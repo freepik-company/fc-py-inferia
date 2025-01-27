@@ -16,7 +16,7 @@ def load_predictor(class_path) -> Any:
 
     if not hasattr(module, predictor_class):
         raise AttributeError(
-                f"Class {predictor_class} not found in module {predictor_path}"
+            f"Class {predictor_class} not found in module {predictor_path}"
         )
 
     predict_class = getattr(module, predictor_class)
@@ -35,12 +35,14 @@ def get_predictor_handler_return_type(predictor: BasePredictor):
 
     # Create a new dynamic type based on ResultResponse, with the correct module and annotated field
     return type(
-            f"{predictor.__class__.__name__}Response",
-            (ResultResponse,),
-            {
-                "__annotations__": {"result": return_type},  # Annotate the result field with the return type
-                "__module__": ResultResponse.__module__,  # Ensure the module is set correctly for Pydantic
-            },
+        f"{predictor.__class__.__name__}Response",
+        (ResultResponse,),
+        {
+            "__annotations__": {
+                "result": return_type
+            },  # Annotate the result field with the return type
+            "__module__": ResultResponse.__module__,  # Ensure the module is set correctly for Pydantic
+        },
     )
 
 
@@ -59,16 +61,21 @@ def wrap_handler(descriptor: str, original_handler: Callable) -> Callable:
 
     # Check if the original handler is an async function
     if inspect.iscoroutinefunction(original_handler):
+
         async def handler(input: input_model):
             result = await original_handler(**input.model_dump())
             return result
+
     else:
+
         def handler(input: input_model):
             return original_handler(**input.model_dump())
 
     handler.__annotations__ = {
         "input": input_model,
-        'return': type_hints.get("return", Any)
+        "return": type_hints.get("return", Any),
     }
-    logging.debug(f"Handler of {original_handler.__name__} annotated with {handler.__annotations__}")
+    logging.debug(
+        f"Handler of {original_handler.__name__} annotated with {handler.__annotations__}"
+    )
     return handler

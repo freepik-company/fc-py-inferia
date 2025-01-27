@@ -10,9 +10,7 @@ from cogito.core.models import BasePredictor
 
 async def health_check_handler(request: Request) -> JSONResponse:
     if request.app.state.ready:
-        return JSONResponse(
-            {"status": "OK"}
-        )
+        return JSONResponse({"status": "OK"})
     else:
         return JSONResponse(
             {"status": "Starting"},
@@ -29,9 +27,9 @@ def create_predictor_handler(predictor: BasePredictor, response_model: ResultRes
             end_time = time.time() - start_time
 
             response = response_model(
-                    inference_time_seconds=end_time,
-                    input=request.query_params,
-                    result=result,
+                inference_time_seconds=end_time,
+                input=request.query_params,
+                result=result,
             )
             return response.model_dump()
         except Exception as e:

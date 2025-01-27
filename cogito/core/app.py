@@ -28,24 +28,22 @@ class Application:
     ready: bool
 
     def __init__(
-            self,
-            config_file_path: str = ".",
-            logger: Union[Any, logging.Logger] = None,
+        self,
+        config_file_path: str = ".",
+        logger: Union[Any, logging.Logger] = None,
     ):
 
         self._logger = logger or Application._get_default_logger()
 
         try:
             self.config = ConfigFile.load_from_file(
-                    os.path.join(
-                            f"{config_file_path}/cogito.yaml"
-                    )
+                os.path.join(f"{config_file_path}/cogito.yaml")
             )
         except ConfigFileNotFoundError as e:
-            self._logger.warning("config file does not exist. Using default configuration.", extra={
-                'error': str(e),
-                'config_file_path': config_file_path
-            })
+            self._logger.warning(
+                "config file does not exist. Using default configuration.",
+                extra={"error": str(e), "config_file_path": config_file_path},
+            )
             self.config = ConfigFile.default()
 
         @asynccontextmanager
@@ -54,12 +52,12 @@ class Application:
             yield
 
         self.app = FastAPI(
-                title=self.config.cogito.server.name,
-                version=self.config.cogito.server.version,
-                description=self.config.cogito.server.description,
-                access_log=self.config.cogito.server.fastapi.access_log,
-                debug=self.config.cogito.server.fastapi.debug,
-                lifespan=lifespan,
+            title=self.config.cogito.server.name,
+            version=self.config.cogito.server.version,
+            description=self.config.cogito.server.description,
+            access_log=self.config.cogito.server.fastapi.access_log,
+            debug=self.config.cogito.server.fastapi.debug,
+            lifespan=lifespan,
         )
         self.app.state.ready = False
 
@@ -67,76 +65,85 @@ class Application:
 
         """ Include default routes """
         self.app.add_api_route(
-                "/health-check",
-                health_check_handler,
-                methods=["GET"],
-                name="health_check",
-                description="Health check endpoint",
-                tags=["health"],
+            "/health-check",
+            health_check_handler,
+            methods=["GET"],
+            name="health_check",
+            description="Health check endpoint",
+            tags=["health"],
         )
 
         map_route_to_model: Dict[str, str] = {}
         self.map_model_to_instance: Dict[str, BasePredictor] = {}
 
         for route in self.config.cogito.server.routes:
-            self._logger.info("Adding route", extra={'route': route})
+            self._logger.info("Adding route", extra={"route": route})
             map_route_to_model[route.path] = route.predictor
             if route.predictor not in self.map_model_to_instance:
                 predictor = load_predictor(route.predictor)
                 self.map_model_to_instance[route.predictor] = predictor
             else:
-                self._logger.info("Predictor class already loaded", extra={'predictor': route.predictor})
+                self._logger.info(
+                    "Predictor class already loaded",
+                    extra={"predictor": route.predictor},
+                )
 
             handler = wrap_handler(
-                    descriptor=route.predictor,
-                    original_handler=getattr(
-                            self.map_model_to_instance.get(route.predictor),
-                            "predict"))
-
-            self.app.add_api_route(
-                    route.path,
-                    handler,
-                    methods=["POST"],
-                    name=route.name,
-                    description=route.description,
-                    tags=route.tags,
-                    response_model=handler.__annotations__["return"],
-                    responses={500: {"model": ErrorResponse}},
+                descriptor=route.predictor,
+                original_handler=getattr(
+                    self.map_model_to_instance.get(route.predictor), "predict"
+                ),
             )
 
-        async def validation_exception_handler(request: Request, exc: RequestValidationError):
+            self.app.add_api_route(
+                route.path,
+                handler,
+                methods=["POST"],
+                name=route.name,
+                description=route.description,
+                tags=route.tags,
+                response_model=handler.__annotations__["return"],
+                responses={500: {"model": ErrorResponse}},
+            )
+
+        async def validation_exception_handler(
+            request: Request, exc: RequestValidationError
+        ):
             return JSONResponse(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                    content={
-                        "detail": "There is an error with the request parameters.",
-                        "errors": exc.errors(),
-                        "body": exc.body,
-                    },
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content={
+                    "detail": "There is an error with the request parameters.",
+                    "errors": exc.errors(),
+                    "body": exc.body,
+                },
             )
 
         self.app.add_exception_handler(
-                RequestValidationError,
-                validation_exception_handler
+            RequestValidationError, validation_exception_handler
         )
 
     async def setup(self, app: FastAPI):
         self._logger.info("Setting up application", extra={})
         for predictor in self.map_model_to_instance.values():
             try:
-                self._logger.debug("Setting up predictor", extra={'predictor': predictor.__class__.__name__})
+                self._logger.debug(
+                    "Setting up predictor",
+                    extra={"predictor": predictor.__class__.__name__},
+                )
                 await predictor.setup()
             except Exception as e:
-                self._logger.critical("Unable to setting up predictor", extra={
-                    'predictor': predictor.__class__.__name__, 'error': e
-                })
+                self._logger.critical(
+                    "Unable to setting up predictor",
+                    extra={"predictor": predictor.__class__.__name__, "error": e},
+                )
                 raise SetupError(predictor.__class__.__name__, e)
         app.state.ready = True
 
     def run(self):
         uvicorn.run(
-                self.app,
-                host=self.config.cogito.server.fastapi.host,
-                port=self.config.cogito.server.fastapi.port
+            self.app,
+            host=self.config.cogito.server.fastapi.host,
+            port=self.config.cogito.server.fastapi.port,
         )
 
     @classmethod

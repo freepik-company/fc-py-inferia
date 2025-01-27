@@ -8,9 +8,9 @@ from cogito.core.exceptions import ConfigFileNotFoundError
 
 
 def scaffold_predict_classes(config: ConfigFile, force: bool = False) -> None:
-    template_dir = os.path.join(os.path.dirname(__file__), '..', 'templates')
+    template_dir = os.path.join(os.path.dirname(__file__), "..", "templates")
     env = Environment(loader=FileSystemLoader(template_dir))
-    template = env.get_template('predict_class_template.jinja2')
+    template = env.get_template("predict_class_template.jinja2")
 
     # TODO: validation of the config file?
 
@@ -24,14 +24,11 @@ def scaffold_predict_classes(config: ConfigFile, force: bool = False) -> None:
         if file_name not in files:
             files[file_name] = []
 
-        files[file_name].append({
-            'class_name': class_name,
-            'class_data': class_data
-        })
+        files[file_name].append({"class_name": class_name, "class_data": class_data})
 
     # Create the files
     for file, routes in files.items():
-        class_names = ", ".join([route['class_name'] for route in routes])
+        class_names = ", ".join([route["class_name"] for route in routes])
 
         click.echo(f"Creating a scaffold predict classes ({class_names}) in {file}...")
 
@@ -40,19 +37,25 @@ def scaffold_predict_classes(config: ConfigFile, force: bool = False) -> None:
             continue
 
         rendered_content = template.render(file=files, routes=routes)
-        with open(file, 'w') as f:
+        with open(file, "w") as f:
             f.write(rendered_content)
 
     pass
 
 
 @click.command()
-@click.option("-f", "--force", is_flag=True, default=False, help="Force overwrite of existing files")
+@click.option(
+    "-f",
+    "--force",
+    is_flag=True,
+    default=False,
+    help="Force overwrite of existing files",
+)
 @click.pass_context
 def scaffold(ctx, force: bool = False) -> None:
-    """ Generate predict classes """
+    """Generate predict classes"""
 
-    config_path = ctx.obj['config_path']
+    config_path = ctx.obj["config_path"]
 
     click.echo("Generating predict classes...")
 
@@ -64,4 +67,3 @@ def scaffold(ctx, force: bool = False) -> None:
         return
 
     scaffold_predict_classes(config, force)
-
