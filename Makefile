@@ -3,6 +3,8 @@
 PYTHON_VERSION ?= 3.10
 REPOSITORY?=testpypi
 
+BUMP_INCREMENT=""
+
 
 all: help
 
@@ -82,10 +84,18 @@ install: ## Install the package
 ##@ Release commands
 
 alpha:
-	@cz bump --prerelease $@
+	if [ "${BUMP_INCREMENT}" == "" ]; then \
+	  cz bump --prerelease $@; \
+	else \
+	  cz bump --prerelease $@ --increment ${BUMP_INCREMENT}; \
+	fi
 
 beta:
-	@cz bump --prerelease $@
+	if [ "${BUMP_INCREMENT}" == "" ]; then \
+	  cz bump --prerelease $@; \
+	else \
+	  cz bump --prerelease $@ --increment ${BUMP_INCREMENT}; \
+	fi
 
 dist: ## Build the distribution
 	@python -m build
