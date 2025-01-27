@@ -1,7 +1,7 @@
 import click
 
-from cogito.commands.scaffold_predict import scaffold_predict_classes
-from cogito.core.config import CogitoConfig, ConfigFile, FastAPIConfig, RouteConfig, ServerConfig, TrainingConfig
+from inferia.commands.scaffold_predict import scaffold_predict_classes
+from inferia.core.config import InferiaConfig, ConfigFile, FastAPIConfig, RouteConfig, ServerConfig, TrainingConfig
 
 
 def _init_with_default() -> ConfigFile:
@@ -10,7 +10,7 @@ def _init_with_default() -> ConfigFile:
 
 def _init_prompted() -> ConfigFile:
     click.echo("Please provide the following information to initialize the project configuration:")
-    name = click.prompt("Project name", type=str, default="Cogito ergo infero", show_default=True)
+    name = click.prompt("Project name", type=str, default="Sapientia per Inferentiam", show_default=True)
     description = click.prompt("Project description", type=str, default=None, show_default=True)
     version = click.prompt("Project version", type=str, default="1.0.0", show_default=True)
 
@@ -51,13 +51,13 @@ def _init_prompted() -> ConfigFile:
 
     click.echo("Great! We're all set.")
 
-    cogito = CogitoConfig(
+    inferia = InferiaConfig(
             server=server,
             training=training,
     )
 
     return ConfigFile(
-            cogito=cogito
+            inferia=inferia
     )
 
 
@@ -73,7 +73,7 @@ def init(ctx, scaffold: bool = False,  default: bool = False, force: bool = Fals
 
     click.echo("Initializing...")
 
-    if ConfigFile.exists(f"{config_path}/cogito.yaml") and not force:
+    if ConfigFile.exists(f"{config_path}/inferia.yaml") and not force:
         click.echo("Already initialized.")
         return
 
@@ -85,5 +85,5 @@ def init(ctx, scaffold: bool = False,  default: bool = False, force: bool = Fals
     if scaffold:
         scaffold_predict_classes(config, force)
 
-    config.save_to_file(f"{config_path}/cogito.yaml")
+    config.save_to_file(f"{config_path}/inferia.yaml")
     click.echo("Initialized successfully.")
