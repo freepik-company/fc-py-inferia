@@ -1,3 +1,19 @@
+## 0.1.0 (2025-01-27)
+
+### Feat
+
+- build and publish cogito as a pip module in test pypi and pypi (#31)
+- Implements type inspection of predict methods (#20)
+
+### Fix
+
+- Changes JSONResponse importation (#26)
+
+### Refactor
+
+- add codestyle pre commit (#32)
+- models setup on lifespan (#25)
+
 ## 0.0.1 (2025-01-24)
 
 ### Feat
