@@ -74,10 +74,18 @@ dependencies-dev-install: .venv ## Install the development dependencies
 run-test: dev-dependencies ## Run the tests
 	@. .venv/bin/activate && python -m pytest
 
-##@ PyPi commands
+##@ Install
 
 install: ## Install the package
 	@pip install -e .
+
+##@ Release commands
+
+alpha:
+	@cz bump --prerelease $@
+
+beta:
+	@cz bump --prerelease $@
 
 dist: ## Build the distribution
 	@python -m build
