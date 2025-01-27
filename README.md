@@ -41,15 +41,12 @@ The **Inferia CLI** provides several commands to initialize, scaffold, and run y
 
 ---
 
-## Table of Contents
+## CLI Reference
 
-1. [Overview](#overview)
-2. [Installation](#installation)
-3. [Commands](#commands)
-   - [Initialize](#initialize)
-   - [Scaffold](#scaffold)
-   - [Run](#run)
-4. [Examples](#examples)
+- [Commands](#commands)
+  - [Initialize](#initialize)
+  - [Scaffold](#scaffold)
+  - [Run](#run)
 
 ---
 
