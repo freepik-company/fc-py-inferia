@@ -6,19 +6,23 @@ from pydantic import BaseModel
 
 from inferia.core.exceptions import ConfigFileNotFoundError
 
+
 class ArgConfig(BaseModel):
     name: str
     type: str
     description: Optional[str] = None
 
+
 class ResponseConfig(BaseModel):
     type: str
     description: Optional[str] = None
+
 
 class RouteConfig(BaseModel):
     """
     Route configuration.
     """
+
     name: str
     description: Optional[str] = None
     path: str
@@ -30,13 +34,21 @@ class RouteConfig(BaseModel):
     @classmethod
     def default(cls):
         return cls(
-                name='Predict',
-                description='Make a single prediction',
-                path='/v1/predict',
-                predictor='predict:Predictor',
-                args=[ArgConfig(name='prompt', type='str', description='The prompt to generate text from')],
-                response=ResponseConfig(type='PredictResponse', description='The generated text'),
-                tags=['predict']
+            name="Predict",
+            description="Make a single prediction",
+            path="/v1/predict",
+            predictor="predict:Predictor",
+            args=[
+                ArgConfig(
+                    name="prompt",
+                    type="str",
+                    description="The prompt to generate text from",
+                )
+            ],
+            response=ResponseConfig(
+                type="PredictResponse", description="The generated text"
+            ),
+            tags=["predict"],
         )
 
 
@@ -55,9 +67,10 @@ class ServerConfig(BaseModel):
     """
     Server configuration.
     """
+
     name: str
     description: Optional[str] = None
-    version: Optional[str] = '1.0.0'
+    version: Optional[str] = "1.0.0"
     fastapi: FastAPIConfig
     routes: List[RouteConfig] = List
 
@@ -68,7 +81,7 @@ class ServerConfig(BaseModel):
             description='Inference server',
             version='0.1.0',
             fastapi=FastAPIConfig.default(),
-            routes=[RouteConfig.default()]
+            routes=[RouteConfig.default()],
         )
 
 
@@ -76,6 +89,7 @@ class TrainingConfig(BaseModel):
     """
     Training configuration.
     """
+
     pass
 
     @classmethod
@@ -87,6 +101,7 @@ class InferiaConfig(BaseModel):
     """
     Inferia configuration.
     """
+
     server: ServerConfig
     training: TrainingConfig
 
@@ -99,6 +114,7 @@ class ConfigFile(BaseModel):
     """
     Configuration file.
     """
+
     inferia: InferiaConfig
 
     @classmethod

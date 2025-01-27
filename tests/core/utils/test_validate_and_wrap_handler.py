@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 from inferia.core.utils import wrap_handler
 
+
 def test_validate_handler_str_input_str_output():
     class MockPredictor:
         def predict(self, input: str) -> str:

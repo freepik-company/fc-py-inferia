@@ -6,8 +6,8 @@ from typing import Any, Dict, Union
 
 import uvicorn
 from fastapi import FastAPI, Request, status
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 from inferia.api.handlers import (
     health_check_handler,
@@ -24,6 +24,7 @@ from inferia.core.models import BasePredictor
 from inferia.core.utils import (
     get_predictor_handler_return_type,
     load_predictor,
+    wrap_handler,
 )
 
 
@@ -93,7 +94,7 @@ class Application:
                 )
 
             handler = wrap_handler(
-                class_name=route.predictor,
+                descriptor=route.predictor,
                 original_handler=getattr(
                     self.map_model_to_instance.get(route.predictor), "predict"
                 ),
