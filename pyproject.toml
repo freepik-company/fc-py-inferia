@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "inferia"
-version = "0.1.1"
+version = "0.1.2a0"
 description = "Inferia is a Python module designed to streamline the creation and deployment of inference services. It provides tools and abstractions to wrap machine learning models and expose them as robust, production-ready APIs with minimal effort."
 authors = [
     {name = "freepik-company/tech-avengers", email = "aivengers@freepik.com"}
@@ -52,6 +52,9 @@ update_changelog_on_bump = true
 [tool.pytest.ini_options]
 minversion = "8.0"
 testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+"inferia" = ["templates/*"]
 
 [project.scripts]
 inferia-cli = "inferia.cli:main"
