@@ -1,7 +1,8 @@
-.PHONY: all help help-variables install dist upload clean
+.PHONY: all help help-variables install dist upload clean venv
 
 PYTHON_VERSION ?= 3.10
 REPOSITORY?=testpypi
+VENV_DIR := .venv
 
 
 all: help
@@ -13,6 +14,7 @@ help-variables:
 	@printf "Variables:\n"
 	@printf "  %-20s %s\n" "PYTHON_VERSION:" "$(PYTHON_VERSION)"
 	@printf "  %-20s %s\n" "REPOSITORY:" "$(REPOSITORY)"
+	@printf "  %-20s %s\n" "VENV_DIR:" "$(VENV_DIR)"
 
 ##@ Development commands
 
@@ -24,10 +26,13 @@ check-uv:
 check-twine:
 	@twine --version || (echo "Please install twine using: make build-install-twine" && exit 1)
 
-.venv: check-uv ## Create the virtual environment
-	@uv venv --python $(PYTHON_VERSION)
+venv: check-uv ## Create the virtual environment
+	@if [ ! -d $(VENV_DIR) ]; then \
+		uv venv --python $(PYTHON_VERSION) $(VENV_DIR); \
+		echo "Virtual environment created in $(VENV_DIR)"; \
+	fi
 
-build: .venv dependencies-install ## Build the local development environment
+build: venv dependencies-install ## Build the local development environment
 
 build-dev: build dependencies-dev-install ## Build the development environment
 	@echo "Development environment built successfully."
@@ -59,20 +64,20 @@ pre-commit-install: ## Install pre-commit hooks
 
 ##@ Dependencies management commands
 
-dependencies-compile: ## Compile the dependencies
+dependencies-compile: venv ## Compile the dependencies
 	@. .venv/bin/activate && uv pip compile --universal -o requirements.txt --no-deps --no-annotate --no-header pyproject.toml
 
-dependencies-install: ## Install the dependencies
+dependencies-install: venv ## Install the dependencies
 	@. .venv/bin/activate && uv sync
 
-dependencies-dev-install: .venv ## Install the development dependencies
+dependencies-dev-install: venv ## Install the development dependencies
 	@. .venv/bin/activate && uv pip install -e .
 	@. .venv/bin/activate && uv sync --dev
 
 ##@ Testing commands
 
-run-test: dev-dependencies ## Run the tests
-	@. .venv/bin/activate && python -m pytest
+run-test: dependencies-dev-install venv ## Run the tests
+	@. .venv/bin/activate && python$(PYTHON_VERSION) -m pytest
 
 ##@ PyPi commands
 
