@@ -5,9 +5,10 @@ __pycache__
 *.pyd
 *.swp
 
+*.egg-info
+build
+dist
 
 !.python-version
 !.gitignore
-
-
-*.egg-info
+!.github
