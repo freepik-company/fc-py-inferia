@@ -86,7 +86,7 @@ install: ## Install the package
 alpha: ## Bump the version to alpha (BUMP_INCREMENT=PATCH|MINOR|MANOR, default: PATCH)
 	cz bump --prerelease $@ --increment ${BUMP_INCREMENT}
 
-beta: ## Bump the version to beta
+beta: ## Bump the version to beta (BUMP_INCREMENT=PATCH|MINOR|MANOR, default: PATCH)
 	cz bump --prerelease $@ --increment ${BUMP_INCREMENT};
 
 dist: ## Build the distribution
