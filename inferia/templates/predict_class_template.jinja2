@@ -20,7 +20,7 @@ class {{ route.class_name }}(BasePredictor):
     {%- endif %}
     """
 
-    def setup(self):
+    async def setup(self):
         """
         This method is called once before the first prediction is made.
         """
