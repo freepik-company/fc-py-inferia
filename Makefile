@@ -83,10 +83,10 @@ install: ## Install the package
 
 ##@ Release commands
 
-alpha: ## Bump the version to alpha (BUMP_INCREMENT=PATCH|MINOR|MANOR, default: PATCH)
+alpha: ## Bump the version to alpha (BUMP_INCREMENT=PATCH|MINOR|MAYOR, default: PATCH)
 	cz bump --prerelease $@ --increment ${BUMP_INCREMENT}
 
-beta: ## Bump the version to beta (BUMP_INCREMENT=PATCH|MINOR|MANOR, default: PATCH)
+beta: ## Bump the version to beta (BUMP_INCREMENT=PATCH|MINOR|MAYOR, default: PATCH)
 	cz bump --prerelease $@ --increment ${BUMP_INCREMENT};
 
 dist: ## Build the distribution
