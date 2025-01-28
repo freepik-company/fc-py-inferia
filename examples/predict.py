@@ -16,7 +16,7 @@ class PredictResponse(BaseModel):
 class GoodPredictor(BasePredictor):
     def predict(self, prompt: str) -> PredictResponse:
         return PredictResponse(
-                image="https://example.com/image.jpg", text="Hello world"
+            image="https://example.com/image.jpg", text="Hello world"
         )
 
     async def setup(self):
@@ -28,7 +28,7 @@ class DelayPredictor(BasePredictor):
     def predict(self, *args, **kwargs) -> PredictResponse:
         time.sleep(5)
         return PredictResponse(
-                image="https://example.com/image.jpg", text="Hello world"
+            image="https://example.com/image.jpg", text="Hello world"
         )
 
     async def setup(self):

@@ -18,7 +18,7 @@ def load_predictor(class_path) -> Any:
 
     if not hasattr(module, predictor_class):
         raise AttributeError(
-                f"Class {predictor_class} not found in module {predictor_path}"
+            f"Class {predictor_class} not found in module {predictor_path}"
         )
 
     predict_class = getattr(module, predictor_class)
@@ -37,20 +37,22 @@ def get_predictor_handler_return_type(predictor: BasePredictor):
 
     # Create a new dynamic type based on ResultResponse, with the correct module and annotated field
     return_class = type(
-            f"{predictor.__class__.__name__}Response",
-            (ResultResponse,),
-            {
-                "__annotations__": {
-                    "result": return_type
-                },  # Annotate the result field with the return type
-                "__module__": ResultResponse.__module__,  # Ensure the module is set correctly for Pydantic
-            },
+        f"{predictor.__class__.__name__}Response",
+        (ResultResponse,),
+        {
+            "__annotations__": {
+                "result": return_type
+            },  # Annotate the result field with the return type
+            "__module__": ResultResponse.__module__,  # Ensure the module is set correctly for Pydantic
+        },
     )
 
     return return_class
 
 
-def wrap_handler(descriptor: str, original_handler: Callable, response_model: ResultResponse) -> Callable:
+def wrap_handler(
+    descriptor: str, original_handler: Callable, response_model: ResultResponse
+) -> Callable:
     sig = signature(original_handler)
     type_hints = get_type_hints(original_handler)
 
@@ -66,12 +68,15 @@ def wrap_handler(descriptor: str, original_handler: Callable, response_model: Re
     # Check if the original handler is an async function
     # Fixme Unify handler after replacing status checking model with file based mode.
     if inspect.iscoroutinefunction(original_handler):
+
         async def handler(input: input_model):
             try:
                 start_time = time.time()
                 result = await original_handler(**input.model_dump())
                 end_time = time.time() - start_time
-                inference_duration_histogram.record(end_time * 1000, {"predictor": class_name, "async": True})
+                inference_duration_histogram.record(
+                    end_time * 1000, {"predictor": class_name, "async": True}
+                )
                 # todo Count successful requests
             except Exception as e:
                 logging.exception(e)
@@ -79,17 +84,21 @@ def wrap_handler(descriptor: str, original_handler: Callable, response_model: Re
                 return ErrorResponse(message=str(e)).to_json_response()
 
             return response_model(
-                    inference_time_seconds=end_time,
-                    input=input.model_dump(),
-                    result=result,
+                inference_time_seconds=end_time,
+                input=input.model_dump(),
+                result=result,
             )
+
     else:
+
         def handler(input: input_model):
             try:
                 start_time = time.time()
                 result = original_handler(**input.model_dump())
                 end_time = time.time() - start_time
-                inference_duration_histogram.record(end_time * 1000, {"predictor": class_name, "async": False})
+                inference_duration_histogram.record(
+                    end_time * 1000, {"predictor": class_name, "async": False}
+                )
                 # todo Count successful requests
             except Exception as e:
                 logging.exception(e)
@@ -97,9 +106,9 @@ def wrap_handler(descriptor: str, original_handler: Callable, response_model: Re
                 return ErrorResponse(message=str(e)).to_json_response()
 
             return response_model(
-                    inference_time_seconds=end_time,
-                    input=input.model_dump(),
-                    result=result,
+                inference_time_seconds=end_time,
+                input=input.model_dump(),
+                result=result,
             )
 
     handler.__annotations__ = {
@@ -107,6 +116,6 @@ def wrap_handler(descriptor: str, original_handler: Callable, response_model: Re
         "return": response_model.__class__,
     }
     logging.debug(
-            f"Handler of {original_handler.__name__} annotated with {handler.__annotations__}"
+        f"Handler of {original_handler.__name__} annotated with {handler.__annotations__}"
     )
     return handler

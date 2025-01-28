@@ -8,8 +8,8 @@ async def health_check_handler(request: Request) -> JSONResponse:
         return JSONResponse({"status": "OK"})
     else:
         return JSONResponse(
-                {"status": "Starting"},
-                status_code=503,
+            {"status": "Starting"},
+            status_code=503,
         )
 
 
