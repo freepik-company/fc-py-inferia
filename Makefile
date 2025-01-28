@@ -53,10 +53,10 @@ git-prune: ## Prune the git repository
 	@rm .branches_to_delete
 
 code-style-check: ## Checks the code style.
-	@. .venv/bin/activate && black --check .
+	@. $(VENV_DIR)/bin/activate && black --check .
 
 code-style-dirty: ## Fixes the code style but does not commit the changes
-	@. .venv/bin/activate && black .
+	@. $(VENV_DIR)/bin/activate && black .
 
 code-style: code-style-dirty ## Check the code style and commit the changes
 	@git commit -am "style: fix code style"
@@ -67,27 +67,27 @@ pre-commit-install: ## Install pre-commit hooks
 ##@ Dependencies management commands
 
 dependencies-compile: venv ## Compile the dependencies
-	@. .venv/bin/activate && uv pip compile --universal -o requirements.txt --no-deps --no-annotate --no-header pyproject.toml
+	@. $(VENV_DIR)/bin/activate && uv pip compile --universal -o requirements.txt --no-deps --no-annotate --no-header pyproject.toml
 
 dependencies-install: venv ## Install the dependencies
-	@. .venv/bin/activate && uv sync
+	@. $(VENV_DIR)/bin/activate && uv sync
 
 dependencies-dev-install: venv ## Install the development dependencies
-	@. .venv/bin/activate && uv pip install -e .
-	@. .venv/bin/activate && uv sync --dev
+	@. $(VENV_DIR)/bin/activate && uv pip install -e .
+	@. $(VENV_DIR)/bin/activate && uv sync --dev
 
 ##@ Testing commands
 
 run-test: dependencies-dev-install venv ## Run the tests
-	@. .venv/bin/activate && python$(PYTHON_VERSION) -m pytest
+	@. $(VENV_DIR)/bin/activate && python$(PYTHON_VERSION) -m pytest
 
 run-test: venv dependencies-dev-install ## Run the tests
-	@. .venv/bin/activate && python -m pytest
+	@. $(VENV_DIR)/bin/activate && python -m pytest
 
 ##@ Install
 
-install: ## Install the package
-	@pip install -e .
+install: venv ## Install the package
+	@. $(VENV_DIR)/bin/activate && uv pip install .
 
 ##@ Release commands
 
