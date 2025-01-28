@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import sys
 from contextlib import asynccontextmanager
 from typing import Any, Dict, Union
 
@@ -8,11 +9,12 @@ import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
+
 
 from inferia.api.handlers import (
     health_check_handler,
 )
-from inferia.core.utils import wrap_handler
 from inferia.api.responses import ErrorResponse
 from inferia.core.config import ConfigFile
 from inferia.core.exceptions import (
@@ -49,8 +51,16 @@ class Application:
 
         @asynccontextmanager
         async def lifespan(app: FastAPI):
-            asyncio.create_task(self.setup(app))
-            yield
+            task = asyncio.create_task(self.setup(app))
+            try:
+                await task
+                yield
+            except SetupError as e:
+                self._logger.critical(
+                    "Unable to start application",
+                    extra={"error": e},
+                )
+                sys.exit(1)
 
         self.app = FastAPI(
             title=self.config.inferia.server.name,
@@ -112,11 +122,11 @@ class Application:
         ):
             return JSONResponse(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                content={
+                content=jsonable_encoder({
                     "detail": "There is an error with the request parameters.",
                     "errors": exc.errors(),
                     "body": exc.body,
-                },
+                }),
             )
 
         self.app.add_exception_handler(
