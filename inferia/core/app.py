@@ -8,11 +8,12 @@ import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
+
 
 from inferia.api.handlers import (
     health_check_handler,
 )
-from inferia.core.utils import wrap_handler
 from inferia.api.responses import ErrorResponse
 from inferia.core.config import ConfigFile
 from inferia.core.exceptions import (
@@ -112,11 +113,11 @@ class Application:
         ):
             return JSONResponse(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                content={
+                content=jsonable_encoder({
                     "detail": "There is an error with the request parameters.",
                     "errors": exc.errors(),
                     "body": exc.body,
-                },
+                }),
             )
 
         self.app.add_exception_handler(
