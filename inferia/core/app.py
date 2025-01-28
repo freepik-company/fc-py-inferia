@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import sys
 from contextlib import asynccontextmanager
 from typing import Any, Dict, Union
 
@@ -50,8 +51,16 @@ class Application:
 
         @asynccontextmanager
         async def lifespan(app: FastAPI):
-            asyncio.create_task(self.setup(app))
-            yield
+            task = asyncio.create_task(self.setup(app))
+            try:
+                await task
+                yield
+            except SetupError as e:
+                self._logger.critical(
+                    "Unable to start application",
+                    extra={"error": e},
+                )
+                sys.exit(1)
 
         self.app = FastAPI(
             title=self.config.inferia.server.name,
