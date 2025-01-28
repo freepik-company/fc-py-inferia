@@ -71,7 +71,7 @@ dependencies-dev-install: .venv ## Install the development dependencies
 
 ##@ Testing commands
 
-run-test: dependencies-dev-install ## Run the tests
+run-test: .venv dependencies-dev-install ## Run the tests
 	@. .venv/bin/activate && python -m pytest
 
 ##@ PyPi commands
