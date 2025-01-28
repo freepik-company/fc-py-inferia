@@ -1,4 +1,4 @@
-.PHONY: all help help-variables install dist upload clean
+.PHONY: all help help-variables install dist upload clean run-test dependencies-dev-install
 
 PYTHON_VERSION ?= 3.10
 REPOSITORY?=testpypi
@@ -73,7 +73,7 @@ dependencies-dev-install: .venv ## Install the development dependencies
 
 ##@ Testing commands
 
-run-test: dev-dependencies ## Run the tests
+run-test: .venv dependencies-dev-install ## Run the tests
 	@. .venv/bin/activate && python -m pytest
 
 ##@ Install
