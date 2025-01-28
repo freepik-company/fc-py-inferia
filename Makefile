@@ -1,8 +1,10 @@
-.PHONY: all help help-variables install dist upload clean venv
+.PHONY: all help help-variables install dist upload clean venv run-test dependencies-dev-install
 
 PYTHON_VERSION ?= 3.10
 REPOSITORY?=testpypi
 VENV_DIR := .venv
+
+BUMP_INCREMENT?="PATCH"
 
 
 all: help
@@ -79,12 +81,27 @@ dependencies-dev-install: venv ## Install the development dependencies
 run-test: dependencies-dev-install venv ## Run the tests
 	@. .venv/bin/activate && python$(PYTHON_VERSION) -m pytest
 
-##@ PyPi commands
+run-test: venv dependencies-dev-install ## Run the tests
+	@. .venv/bin/activate && python -m pytest
+
+##@ Install
 
 install: ## Install the package
 	@pip install -e .
 
+##@ Release commands
+
+alpha: ## Bump the version to alpha (BUMP_INCREMENT=PATCH|MINOR|MANOR, default: PATCH)
+	cz bump --prerelease $@ --increment ${BUMP_INCREMENT}
+
+beta: ## Bump the version to beta (BUMP_INCREMENT=PATCH|MINOR|MANOR, default: PATCH)
+	cz bump --prerelease $@ --increment ${BUMP_INCREMENT};
+
 dist: ## Build the distribution
+	@if [ -d "dist" ]; then \
+		echo "WARNING: Clean dist directory first."; \
+		exit 1; \
+	fi
 	@python -m build
 
 upload: dist ## Upload the distribution
