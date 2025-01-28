@@ -77,9 +77,9 @@ class ServerConfig(BaseModel):
     @classmethod
     def default(cls):
         return cls(
-            name='Sapientia per Inferentiam',
-            description='Inference server',
-            version='0.1.0',
+            name="Sapientia per Inferentiam",
+            description="Inference server",
+            version="0.1.0",
             fastapi=FastAPIConfig.default(),
             routes=[RouteConfig.default()],
         )

@@ -1,7 +1,14 @@
 import click
 
 from inferia.commands.scaffold_predict import scaffold_predict_classes
-from inferia.core.config import InferiaConfig, ConfigFile, FastAPIConfig, RouteConfig, ServerConfig, TrainingConfig
+from inferia.core.config import (
+    InferiaConfig,
+    ConfigFile,
+    FastAPIConfig,
+    RouteConfig,
+    ServerConfig,
+    TrainingConfig,
+)
 
 
 def _init_with_default() -> ConfigFile:
