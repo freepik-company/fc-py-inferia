@@ -1,12 +1,14 @@
 import importlib
 import inspect
 import logging
+import time
 from inspect import Parameter, signature
 from typing import Any, Callable, get_type_hints
 
 from pydantic import create_model, Field
 
-from inferia.api.responses import ResultResponse
+from inferia.api.responses import ErrorResponse, ResultResponse
+from inferia.core.metrics import inference_duration_histogram
 from inferia.core.models import BasePredictor
 
 
@@ -34,7 +36,7 @@ def get_predictor_handler_return_type(predictor: BasePredictor):
     return_type = predictor.predict.__annotations__.get("return", None)
 
     # Create a new dynamic type based on ResultResponse, with the correct module and annotated field
-    return type(
+    return_class = type(
         f"{predictor.__class__.__name__}Response",
         (ResultResponse,),
         {
@@ -45,8 +47,12 @@ def get_predictor_handler_return_type(predictor: BasePredictor):
         },
     )
 
+    return return_class
 
-def wrap_handler(descriptor: str, original_handler: Callable) -> Callable:
+
+def wrap_handler(
+    descriptor: str, original_handler: Callable, response_model: ResultResponse
+) -> Callable:
     sig = signature(original_handler)
     type_hints = get_type_hints(original_handler)
 
@@ -60,20 +66,54 @@ def wrap_handler(descriptor: str, original_handler: Callable) -> Callable:
     input_model = create_model(f"{class_name}Request", **input_fields)
 
     # Check if the original handler is an async function
+    # Fixme Unify handler after replacing status checking model with file based mode.
     if inspect.iscoroutinefunction(original_handler):
 
         async def handler(input: input_model):
-            result = await original_handler(**input.model_dump())
-            return result
+            try:
+                start_time = time.time()
+                result = await original_handler(**input.model_dump())
+                end_time = time.time() - start_time
+                inference_duration_histogram.record(
+                    end_time * 1000, {"predictor": class_name, "async": True}
+                )
+                # todo Count successful requests
+            except Exception as e:
+                logging.exception(e)
+                # todo Count failed requests
+                return ErrorResponse(message=str(e)).to_json_response()
+
+            return response_model(
+                inference_time_seconds=end_time,
+                input=input.model_dump(),
+                result=result,
+            )
 
     else:
 
         def handler(input: input_model):
-            return original_handler(**input.model_dump())
+            try:
+                start_time = time.time()
+                result = original_handler(**input.model_dump())
+                end_time = time.time() - start_time
+                inference_duration_histogram.record(
+                    end_time * 1000, {"predictor": class_name, "async": False}
+                )
+                # todo Count successful requests
+            except Exception as e:
+                logging.exception(e)
+                # todo Count failed requests
+                return ErrorResponse(message=str(e)).to_json_response()
+
+            return response_model(
+                inference_time_seconds=end_time,
+                input=input.model_dump(),
+                result=result,
+            )
 
     handler.__annotations__ = {
         "input": input_model,
-        "return": type_hints.get("return", Any),
+        "return": response_model.__class__,
     }
     logging.debug(
         f"Handler of {original_handler.__name__} annotated with {handler.__annotations__}"
