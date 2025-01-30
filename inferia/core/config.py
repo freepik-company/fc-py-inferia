@@ -75,6 +75,7 @@ class ServerConfig(BaseModel):
     version: Optional[str] = "1.0.0"
     fastapi: FastAPIConfig
     routes: List[RouteConfig] = List
+    cache_dir: str = None
 
     @classmethod
     def default(cls):
@@ -84,6 +85,7 @@ class ServerConfig(BaseModel):
             version="0.1.0",
             fastapi=FastAPIConfig.default(),
             routes=[RouteConfig.default()],
+            cache_dir="/tmp/inferia",
         )
 
 
