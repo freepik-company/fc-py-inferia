@@ -30,6 +30,7 @@ class RouteConfig(BaseModel):
     args: Optional[List["ArgConfig"]] = None
     response: Optional["ResponseConfig"] = None
     tags: List[str] = List
+    threads: int
 
     @classmethod
     def default(cls):
@@ -38,6 +39,7 @@ class RouteConfig(BaseModel):
             description="Make a single prediction",
             path="/v1/predict",
             predictor="predict:Predictor",
+            threads=1,
             args=[
                 ArgConfig(
                     name="prompt",
@@ -73,6 +75,7 @@ class ServerConfig(BaseModel):
     version: Optional[str] = "1.0.0"
     fastapi: FastAPIConfig
     routes: List[RouteConfig] = List
+    cache_dir: str = None
 
     @classmethod
     def default(cls):
@@ -82,6 +85,7 @@ class ServerConfig(BaseModel):
             version="0.1.0",
             fastapi=FastAPIConfig.default(),
             routes=[RouteConfig.default()],
+            cache_dir="/tmp/inferia",
         )
 
 

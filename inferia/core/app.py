@@ -6,11 +6,8 @@ from contextlib import asynccontextmanager
 from typing import Any, Dict, Union
 
 import uvicorn
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
-
 
 from inferia.api.handlers import (
     health_check_handler,
@@ -21,6 +18,11 @@ from inferia.core.config import ConfigFile
 from inferia.core.exceptions import (
     ConfigFileNotFoundError,
     SetupError,
+    NoThreadsAvailableError,
+)
+from inferia.core.exceptioin_handlers import (
+    validation_exception_handler,
+    too_many_requests_exception_handler,
 )
 from inferia.core.logging import get_logger
 from inferia.core.models import BasePredictor
@@ -28,6 +30,7 @@ from inferia.core.utils import (
     get_predictor_handler_return_type,
     load_predictor,
     wrap_handler,
+    create_routes_semaphores,
 )
 
 
@@ -94,6 +97,7 @@ class Application:
 
         map_route_to_model: Dict[str, str] = {}
         self.map_model_to_instance: Dict[str, BasePredictor] = {}
+        semaphores = create_routes_semaphores(self.config.inferia)
 
         for route in self.config.inferia.server.routes:
             self._logger.info("Adding route", extra={"route": route})
@@ -115,6 +119,7 @@ class Application:
                 original_handler=getattr(
                     self.map_model_to_instance.get(route.predictor), "predict"
                 ),
+                semaphore=semaphores[route.predictor],
                 response_model=response_model,
             )
 
@@ -129,22 +134,11 @@ class Application:
                 responses={500: {"model": ErrorResponse}},
             )
 
-        async def validation_exception_handler(
-            request: Request, exc: RequestValidationError
-        ):
-            return JSONResponse(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                content=jsonable_encoder(
-                    {
-                        "detail": "There is an error with the request parameters.",
-                        "errors": exc.errors(),
-                        "body": exc.body,
-                    }
-                ),
-            )
-
         self.app.add_exception_handler(
             RequestValidationError, validation_exception_handler
+        )
+        self.app.add_exception_handler(
+            NoThreadsAvailableError, too_many_requests_exception_handler
         )
 
     def _set_default_routes(self) -> None:

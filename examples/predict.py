@@ -1,6 +1,5 @@
-import asyncio
 import logging
-import time
+import asyncio
 from typing import Any
 
 from pydantic import BaseModel
@@ -14,25 +13,25 @@ class PredictResponse(BaseModel):
 
 
 class GoodPredictor(BasePredictor):
-    def predict(self, prompt: str) -> PredictResponse:
+    def predict(self, *args, **kwargs) -> PredictResponse:
         return PredictResponse(
             image="https://example.com/image.jpg", text="Hello world"
         )
 
     async def setup(self):
-        await asyncio.sleep(2)
+        await asyncio.sleep(10)
         logging.info("I'm ready")
 
 
 class DelayPredictor(BasePredictor):
-    def predict(self, *args, **kwargs) -> PredictResponse:
-        time.sleep(5)
+    async def predict(self, *args, **kwargs) -> PredictResponse:
+        await asyncio.sleep(5)
         return PredictResponse(
             image="https://example.com/image.jpg", text="Hello world"
         )
 
     async def setup(self):
-        await asyncio.sleep(2)
+        await asyncio.sleep(10)
         logging.info("I'm ready")
 
 
@@ -41,5 +40,5 @@ class BadPredictor(BasePredictor):
         raise Exception("No doy permisos de root")
 
     async def setup(self):
-        await asyncio.sleep(2)
+        await asyncio.sleep(10)
         logging.info("I'm ready")

@@ -16,3 +16,8 @@ class InvalidHandlerSignature(Exception):
 class ModelDownloadError(Exception):
     def __init__(self, model_path: str, error: Exception):
         super().__init__(f"Unable to download model {model_path}: {error}")
+
+
+class NoThreadsAvailableError(Exception):
+    def __init__(self, class_name: str):
+        super().__init__(f"No threads available for {class_name}")
