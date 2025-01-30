@@ -54,6 +54,13 @@ class Application:
             )
             self.config = ConfigFile.default()
 
+        if self.config.inferia.server.cache_dir:
+            os.environ["HF_HOME"] = self.config.inferia.server.cache_dir
+            os.environ["INFERIA_HOME"] = self.config.inferia.server.cache_dir
+        else:
+            os.environ["HF_HOME"] = os.path.expanduser("/.inferia/models")
+            os.environ["INFERIA_HOME"] = os.path.expanduser("/.inferia/models")
+
         @asynccontextmanager
         async def lifespan(app: FastAPI):
             task = asyncio.create_task(self.setup(app))
@@ -127,11 +134,13 @@ class Application:
         ):
             return JSONResponse(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                content=jsonable_encoder({
-                    "detail": "There is an error with the request parameters.",
-                    "errors": exc.errors(),
-                    "body": exc.body,
-                }),
+                content=jsonable_encoder(
+                    {
+                        "detail": "There is an error with the request parameters.",
+                        "errors": exc.errors(),
+                        "body": exc.body,
+                    }
+                ),
             )
 
         self.app.add_exception_handler(

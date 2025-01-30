@@ -1,6 +1,7 @@
 import importlib
 import inspect
 import logging
+import os
 import time
 from inspect import Parameter, signature
 from typing import Any, Callable, get_type_hints
@@ -8,8 +9,10 @@ from typing import Any, Callable, get_type_hints
 from pydantic import create_model, Field
 
 from inferia.api.responses import ErrorResponse, ResultResponse
+from inferia.core.exceptions import ModelDownloadError
 from inferia.core.metrics import inference_duration_histogram
 from inferia.core.models import BasePredictor
+from inferia.core.model_store import download_gcp_model, download_huggingface_model
 
 
 def load_predictor(class_path) -> Any:
@@ -119,3 +122,21 @@ def wrap_handler(
         f"Handler of {original_handler.__name__} annotated with {handler.__annotations__}"
     )
     return handler
+
+
+def model_download(model_path: str) -> str:
+    """
+    Download a model from various sources based on the model path format.
+    Supported formats:
+    - Google Cloud Storage: gs://bucket/path/to/model
+    - Hugging Face: repo_owner/repo_name
+    """
+    cache_dir = os.getenv("INFERIA_HOME")
+    os.environ["HF_HOME"] = cache_dir
+
+    try:
+        if model_path.startswith("gs://"):
+            return download_gcp_model(model_path, cache_dir)
+        return download_huggingface_model(model_path, cache_dir)
+    except Exception as e:
+        raise ModelDownloadError(model_path, e)
