@@ -1,13 +1,16 @@
+import asyncio
 import importlib
 import inspect
 import logging
 from inspect import Parameter, signature
-from typing import Any, Callable, get_type_hints
+from typing import Any, Callable, get_type_hints, Dict
 
 from pydantic import create_model, Field
 
 from inferia.api.responses import ResultResponse
 from inferia.core.models import BasePredictor
+from inferia.core.config import InferiaConfig
+from inferia.core.exceptions import NoThreadsAvailableError
 
 
 def load_predictor(class_path) -> Any:
@@ -46,7 +49,9 @@ def get_predictor_handler_return_type(predictor: BasePredictor):
     )
 
 
-def wrap_handler(descriptor: str, original_handler: Callable) -> Callable:
+def wrap_handler(
+    descriptor: str, original_handler: Callable, semaphore: asyncio.Semaphore
+) -> Callable:
     sig = signature(original_handler)
     type_hints = get_type_hints(original_handler)
 
@@ -63,13 +68,34 @@ def wrap_handler(descriptor: str, original_handler: Callable) -> Callable:
     if inspect.iscoroutinefunction(original_handler):
 
         async def handler(input: input_model):
-            result = await original_handler(**input.model_dump())
+            if not semaphore:
+                result = await original_handler(**input.model_dump())
+            else:
+                if semaphore.locked():
+                    raise NoThreadsAvailableError(descriptor)
+                await semaphore.acquire()
+                try:
+                    result = await original_handler(**input.model_dump())
+                finally:
+                    semaphore.release()
             return result
 
     else:
+        if not semaphore:
 
-        def handler(input: input_model):
-            return original_handler(**input.model_dump())
+            def handler(input: input_model):
+                return original_handler(**input.model_dump())
+
+        else:
+
+            def handler(input: input_model):
+                if semaphore.locked():
+                    raise NoThreadsAvailableError(descriptor)
+                semaphore.acquire()
+                try:
+                    return original_handler(**input.model_dump())
+                finally:
+                    semaphore.release()
 
     handler.__annotations__ = {
         "input": input_model,
@@ -79,3 +105,22 @@ def wrap_handler(descriptor: str, original_handler: Callable) -> Callable:
         f"Handler of {original_handler.__name__} annotated with {handler.__annotations__}"
     )
     return handler
+
+
+def create_routes_semaphores(config: InferiaConfig) -> Dict[str, asyncio.Semaphore]:
+    semaphores = {}
+    for route in config.server.routes:
+        semaphores[route.predictor] = asyncio.Semaphore(route.threads)
+
+    return semaphores
+
+
+# Dependencia para limitar la concurrencia
+async def limit_concurrent_requests(semaphore: asyncio.Semaphore):
+
+    await semaphore.acquire()  # Bloquea si se alcanzó el límite
+
+    try:
+        yield  # Ejecuta la lógica de la ruta
+    finally:
+        semaphore.release()  # Libera el semáforo al finalizar

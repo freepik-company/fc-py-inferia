@@ -24,8 +24,8 @@ class GoodPredictor(BasePredictor):
 
 
 class DelayPredictor(BasePredictor):
-    def predict(self, *args, **kwargs) -> PredictResponse:
-        asyncio.sleep(5)
+    async def predict(self, *args, **kwargs) -> PredictResponse:
+        await asyncio.sleep(5)
         return PredictResponse(
             image="https://example.com/image.jpg", text="Hello world"
         )

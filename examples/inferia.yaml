@@ -12,6 +12,7 @@ inferia:
         description: Simulates a good predictions, with results.
         path: "/v1/predict/good"
         predictor: "predict:GoodPredictor"
+        threads: 1
         tags:
           - good
       - name: Delay Predictor
@@ -20,11 +21,13 @@ inferia:
         predictor: "predict:DelayPredictor"
         tags:
           - delay
+        threads: 3
       - name: Bad Predictor
         description: Simulates a bad prediction, with error response.
         path: "/v1/predict/bad"
         predictor: "predict:BadPredictor"
         tags:
           - bad
+        threads: 4
     version: 0.1.0
   training: { }

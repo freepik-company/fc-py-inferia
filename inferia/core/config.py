@@ -30,6 +30,7 @@ class RouteConfig(BaseModel):
     args: Optional[List["ArgConfig"]] = None
     response: Optional["ResponseConfig"] = None
     tags: List[str] = List
+    threads: int
 
     @classmethod
     def default(cls):
@@ -38,6 +39,7 @@ class RouteConfig(BaseModel):
             description="Make a single prediction",
             path="/v1/predict",
             predictor="predict:Predictor",
+            threads=1,
             args=[
                 ArgConfig(
                     name="prompt",
@@ -77,9 +79,9 @@ class ServerConfig(BaseModel):
     @classmethod
     def default(cls):
         return cls(
-            name='Sapientia per Inferentiam',
-            description='Inference server',
-            version='0.1.0',
+            name="Sapientia per Inferentiam",
+            description="Inference server",
+            version="0.1.0",
             fastapi=FastAPIConfig.default(),
             routes=[RouteConfig.default()],
         )
