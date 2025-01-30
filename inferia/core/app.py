@@ -11,6 +11,7 @@ from fastapi.exceptions import RequestValidationError
 
 from inferia.api.handlers import (
     health_check_handler,
+    metrics_handler,
 )
 from inferia.api.responses import ErrorResponse
 from inferia.core.config import ConfigFile
@@ -25,7 +26,12 @@ from inferia.core.exceptioin_handlers import (
 )
 from inferia.core.logging import get_logger
 from inferia.core.models import BasePredictor
-from inferia.core.utils import load_predictor, wrap_handler, create_routes_semaphores
+from inferia.core.utils import (
+    get_predictor_handler_return_type,
+    load_predictor,
+    wrap_handler,
+    create_routes_semaphores,
+)
 
 
 class Application:
@@ -72,19 +78,15 @@ class Application:
             debug=self.config.inferia.server.fastapi.debug,
             lifespan=lifespan,
         )
+
+        # FastAPIInstrumentor.instrument_app(self.app, excluded_urls=",".join(
+        #        ["/health-check", "/metrics", "/docs", "/openapi.json"]))
+
         self.app.state.ready = False
 
         self.app.logger = self._logger
 
-        """ Include default routes """
-        self.app.add_api_route(
-            "/health-check",
-            health_check_handler,
-            methods=["GET"],
-            name="health_check",
-            description="Health check endpoint",
-            tags=["health"],
-        )
+        self._set_default_routes()
 
         map_route_to_model: Dict[str, str] = {}
         self.map_model_to_instance: Dict[str, BasePredictor] = {}
@@ -101,12 +103,17 @@ class Application:
                     "Predictor class already loaded",
                     extra={"predictor": route.predictor},
                 )
+
+            model = self.map_model_to_instance.get(route.predictor)
+            response_model = get_predictor_handler_return_type(model)
+
             handler = wrap_handler(
                 descriptor=route.predictor,
                 original_handler=getattr(
                     self.map_model_to_instance.get(route.predictor), "predict"
                 ),
                 semaphore=semaphores[route.predictor],
+                response_model=response_model,
             )
 
             self.app.add_api_route(
@@ -116,7 +123,7 @@ class Application:
                 name=route.name,
                 description=route.description,
                 tags=route.tags,
-                response_model=handler.__annotations__["return"],
+                response_model=response_model,
                 responses={500: {"model": ErrorResponse}},
             )
 
@@ -125,6 +132,26 @@ class Application:
         )
         self.app.add_exception_handler(
             NoThreadsAvailableError, too_many_requests_exception_handler
+        )
+
+    def _set_default_routes(self) -> None:
+        """Include default routes"""
+        self.app.add_api_route(
+            "/health-check",
+            health_check_handler,
+            methods=["GET"],
+            name="health_check",
+            description="Health check endpoint",
+            tags=["health"],
+        )
+
+        self.app.add_api_route(
+            "/metrics",
+            metrics_handler,
+            methods=["GET"],
+            name="metrics",
+            description="Metrics endpoint",
+            tags=["metrics"],
         )
 
     async def setup(self, app: FastAPI):
