@@ -29,5 +29,6 @@ inferia:
         tags:
           - bad
         threads: 4
+    cache_dir: "~/.inferia/models"
     version: 0.1.0
   training: { }

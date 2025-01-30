@@ -57,6 +57,13 @@ class Application:
             )
             self.config = ConfigFile.default()
 
+        if self.config.inferia.server.cache_dir:
+            os.environ["HF_HOME"] = self.config.inferia.server.cache_dir
+            os.environ["INFERIA_HOME"] = self.config.inferia.server.cache_dir
+        else:
+            os.environ["HF_HOME"] = os.path.expanduser("/.inferia/models")
+            os.environ["INFERIA_HOME"] = os.path.expanduser("/.inferia/models")
+
         @asynccontextmanager
         async def lifespan(app: FastAPI):
             task = asyncio.create_task(self.setup(app))
