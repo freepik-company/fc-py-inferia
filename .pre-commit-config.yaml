@@ -9,6 +9,5 @@ repos:
     hooks:
       - id: pytest
         name: Run Pytest
-        entry: pytest --maxfail=1 --disable-warnings -q
+        entry: make run-test
         language: system
-        types: [python]        
