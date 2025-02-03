@@ -4,7 +4,6 @@ import sys
 import click
 
 from inferia import Application
-from inferia.core.config import ConfigFile
 
 
 @click.command()
@@ -17,10 +16,13 @@ def run(ctx):
     # change cwd to config_path
     os.chdir(absolute_path)
     if not os.path.exists(absolute_path):
-        click.echo(f"Path '{absolute_path}' does not exist.")
+        click.echo(f"Error: Path '{absolute_path}' does not exist.", err=True, color=True)
         exit(1)
-    else:
-        # Add the config_path to the sys.path
+
+    try:
         sys.path.insert(0, absolute_path)
         app = Application(config_file_path=absolute_path)
         app.run()
+    except Exception as e:
+        click.echo(f"Error: {e}", err=True, color=True)
+        exit(1)
