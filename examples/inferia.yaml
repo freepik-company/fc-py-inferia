@@ -1,5 +1,6 @@
 inferia:
   server:
+    cache_dir: /tmp/inferia
     description: Inference server
     fastapi:
       access_log: true
@@ -7,28 +8,20 @@ inferia:
       host: 127.0.0.1
       port: 8000
     name: Sapientia per Inferentiam
-    routes:
-      - name: Good Predictor
-        description: Simulates a good predictions, with results.
-        path: "/v1/predict/good"
-        predictor: "predict:GoodPredictor"
-        threads: 1
-        tags:
-          - good
-      - name: Delay Predictor
-        description: Simulates a delayed prediction, with results.
-        path: "/v1/predict/delay"
-        predictor: "predict:DelayPredictor"
-        tags:
-          - delay
-        threads: 3
-      - name: Bad Predictor
-        description: Simulates a bad prediction, with error response.
-        path: "/v1/predict/bad"
-        predictor: "predict:BadPredictor"
-        tags:
-          - bad
-        threads: 4
-    cache_dir: "~/.inferia/models"
+    route:
+      args:
+      - description: The prompt to generate text from
+        name: prompt
+        type: str
+      description: Make a single prediction
+      name: Predict
+      path: /v1/predict
+      predictor: predict:Predictor
+      response:
+        description: The generated text
+        type: PredictResponse
+      tags:
+      - predict
+      threads: 1
     version: 0.1.0
-  training: { }
+  training: {}
