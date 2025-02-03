@@ -16,15 +16,16 @@ def scaffold_predict_classes(config: ConfigFile, force: bool = False) -> None:
 
     # Group routes by file
     files = {}
-    for route in config.inferia.server.routes:
-        file_name = f'{route.predictor.split(":")[0]}.py'
-        class_name = route.predictor.split(":")[1]
-        class_data = route
+    route = config.inferia.server.route
 
-        if file_name not in files:
-            files[file_name] = []
+    file_name = f'{route.predictor.split(":")[0]}.py'
+    class_name = route.predictor.split(":")[1]
+    class_data = route
 
-        files[file_name].append({"class_name": class_name, "class_data": class_data})
+    if file_name not in files:
+        files[file_name] = []
+
+    files[file_name].append({"class_name": class_name, "class_data": class_data})
 
     # Create the files
     for file, routes in files.items():
@@ -45,11 +46,11 @@ def scaffold_predict_classes(config: ConfigFile, force: bool = False) -> None:
 
 @click.command()
 @click.option(
-    "-f",
-    "--force",
-    is_flag=True,
-    default=False,
-    help="Force overwrite of existing files",
+        "-f",
+        "--force",
+        is_flag=True,
+        default=False,
+        help="Force overwrite of existing files",
 )
 @click.pass_context
 def scaffold(ctx, force: bool = False) -> None:
