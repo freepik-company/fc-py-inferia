@@ -13,8 +13,8 @@ class PredictResponse(BaseModel):
 class Predictor(BasePredictor):
     def predict(self, *args, **kwargs) -> PredictResponse:
         return PredictResponse(
-                image="https://example.com/image.jpg", text="Hello world"
+            image="https://example.com/image.jpg", text="Hello world"
         )
 
-    async def setup(self):
+    def setup(self):
         logging.info("I'm ready")
