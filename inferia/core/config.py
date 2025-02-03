@@ -35,22 +35,22 @@ class RouteConfig(BaseModel):
     @classmethod
     def default(cls):
         return cls(
-                name="Predict",
-                description="Make a single prediction",
-                path="/v1/predict",
-                predictor="predict:Predictor",
-                threads=1,
-                args=[
-                    ArgConfig(
-                            name="prompt",
-                            type="str",
-                            description="The prompt to generate text from",
-                    )
-                ],
-                response=ResponseConfig(
-                        type="PredictResponse", description="The generated text"
-                ),
-                tags=["predict"],
+            name="Predict",
+            description="Make a single prediction",
+            path="/v1/predict",
+            predictor="predict:Predictor",
+            threads=1,
+            args=[
+                ArgConfig(
+                    name="prompt",
+                    type="str",
+                    description="The prompt to generate text from",
+                )
+            ],
+            response=ResponseConfig(
+                type="PredictResponse", description="The generated text"
+            ),
+            tags=["predict"],
         )
 
 
@@ -80,12 +80,12 @@ class ServerConfig(BaseModel):
     @classmethod
     def default(cls):
         return cls(
-                name="Sapientia per Inferentiam",
-                description="Inference server",
-                version="0.1.0",
-                fastapi=FastAPIConfig.default(),
-                route=RouteConfig.default(),
-                cache_dir="/tmp/inferia",
+            name="Sapientia per Inferentiam",
+            description="Inference server",
+            version="0.1.0",
+            fastapi=FastAPIConfig.default(),
+            route=RouteConfig.default(),
+            cache_dir="/tmp/inferia",
         )
 
 
