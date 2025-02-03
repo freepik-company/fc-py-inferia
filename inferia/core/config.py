@@ -74,7 +74,7 @@ class ServerConfig(BaseModel):
     description: Optional[str] = None
     version: Optional[str] = "1.0.0"
     fastapi: FastAPIConfig
-    routes: List[RouteConfig] = List
+    route: RouteConfig
     cache_dir: str = None
 
     @classmethod
@@ -84,7 +84,7 @@ class ServerConfig(BaseModel):
             description="Inference server",
             version="0.1.0",
             fastapi=FastAPIConfig.default(),
-            routes=[RouteConfig.default()],
+            route=RouteConfig.default(),
             cache_dir="/tmp/inferia",
         )
 
