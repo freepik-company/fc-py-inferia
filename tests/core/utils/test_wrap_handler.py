@@ -1,6 +1,10 @@
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+from inferia.api.responses import ResultResponse
 from inferia.core.utils import wrap_handler
+
+from pydantic._internal._model_construction import ModelMetaclass
 
 
 def test_wrap_handler_str_output():
@@ -9,14 +13,16 @@ def test_wrap_handler_str_output():
             return f"Hello, {input}"
 
     original_handler = MockPredictor().predict
-    wrapped_handler = wrap_handler("predict:MockPredictor", original_handler)
+    wrapped_handler = wrap_handler(
+        "predict:MockPredictor", original_handler, ResultResponse
+    )
 
     class InputModel(BaseModel):
         input: str
 
     input_data = InputModel(input="World")
     response = wrapped_handler(input_data)
-    assert response == "Hello, World"
+    assert response.result == "Hello, World"
 
 
 def test_wrap_handler_float_input_int_output():
@@ -25,14 +31,16 @@ def test_wrap_handler_float_input_int_output():
             return int(input)
 
     original_handler = MockPredictor().predict
-    wrapped_handler = wrap_handler("predict:MockPredictor", original_handler)
+    wrapped_handler = wrap_handler(
+        "predict:MockPredictor", original_handler, ResultResponse
+    )
 
     class InputModel(BaseModel):
         input: float
 
     input_data = InputModel(input=3.14)
     response = wrapped_handler(input_data)
-    assert response == 3
+    assert response.result == 3
 
 
 def test_wrap_handler_base_model_input_str_output():
@@ -45,11 +53,14 @@ def test_wrap_handler_base_model_input_str_output():
             return f"Hello, {input}"
 
     original_handler = MockPredict().predict
-    wrapped_handler = wrap_handler("predict:MockPredictor", original_handler)
-
+    wrapped_handler = wrap_handler(
+        "predict:MockPredictor", original_handler, ResultResponse
+    )
     input_data = MyModel(input="World")
     response = wrapped_handler(input_data)
-    assert response == "Hello, World"
+    assert response.result == "Hello, World"
+
     wrapped_handler_annotations = wrapped_handler.__annotations__
+
     assert issubclass(wrapped_handler_annotations["input"], BaseModel)
-    assert wrapped_handler_annotations["return"] == str
+    assert issubclass(wrapped_handler_annotations["return"], ResultResponse)
