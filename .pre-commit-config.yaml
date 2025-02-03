@@ -5,3 +5,10 @@ repos:
       - id: black
         files: \.py$  # This ensures black runs only on Python files
         exclude: ^\.venv/  # Excludes the virtual environment directory
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run Pytest
+        entry: pytest --maxfail=1 --disable-warnings -q
+        language: system
+        types: [python]        
