@@ -2,6 +2,7 @@ inferia:
   server:
     cache_dir: /tmp/inferia
     description: Inference server
+    threads: 4
     fastapi:
       access_log: true
       debug: false
@@ -10,9 +11,9 @@ inferia:
     name: Sapientia per Inferentiam
     route:
       args:
-      - description: The prompt to generate text from
-        name: prompt
-        type: str
+        - description: The prompt to generate text from
+          name: prompt
+          type: str
       description: Make a single prediction
       name: Predict
       path: /v1/predict
@@ -21,7 +22,6 @@ inferia:
         description: The generated text
         type: PredictResponse
       tags:
-      - predict
-      threads: 1
+        - predict
     version: 0.1.0
-  training: {}
+  training: { }
