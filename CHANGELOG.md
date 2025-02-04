@@ -1,3 +1,20 @@
+## 0.2.0 (2025-02-04)
+
+### BREAKING CHANGE
+
+- Previous version of inferia.yaml is no longer supported
+
+### Feat
+
+- remove support for several paths per project (#55)
+- implements thread limit per predict() (#54)
+- add model download utils (#52)
+- add metrics endpoint (#49)
+
+### Fix
+
+- Fix assert on test for base Model and ResultResponse.  (#59)
+
 ## 0.1.2 (2025-01-27)
 
 ### Fix
