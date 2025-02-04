@@ -176,7 +176,7 @@ def model_download(model_path: str) -> str:
 def create_routes_semaphores(config: InferiaConfig) -> Dict[str, asyncio.Semaphore]:
     semaphores = {}
     route = config.server.route
-    semaphores[route.predictor] = asyncio.Semaphore(route.threads)
+    semaphores[route.predictor] = asyncio.Semaphore(config.server.threads)
 
     return semaphores
 
