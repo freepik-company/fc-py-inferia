@@ -1,3 +1,10 @@
+## 0.2.1 (2025-02-04)
+
+### Refactor
+
+- **.github/workflows/publish-to-pypi-and-test-pypi.yml**: Update Sigstore Python action to version 3.0.0 (#64)
+- move threads config to server node (#61)
+
 ## 0.2.0 (2025-02-04)
 
 ### BREAKING CHANGE
