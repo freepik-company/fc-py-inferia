@@ -3,7 +3,7 @@ import sys
 
 import click
 
-from inferia import Application
+from cogito import Application
 
 
 @click.command()
@@ -12,7 +12,7 @@ def run(ctx):
     """Run cogito app"""
     config_path = ctx.get("config_path")
     absolute_path = os.path.abspath(config_path)
-    click.echo(f"Running '{absolute_path}' inferia application...")
+    click.echo(f"Running '{absolute_path}' cogito application...")
     # change cwd to config_path
     os.chdir(absolute_path)
     if not os.path.exists(absolute_path):

@@ -3,7 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
-from inferia.core.exceptions import NoThreadsAvailableError
+from cogito.core.exceptions import NoThreadsAvailableError
 
 
 async def validation_exception_handler(request: Request, exc: RequestValidationError):

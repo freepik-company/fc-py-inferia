@@ -1,8 +1,8 @@
 import click
 
-from inferia.commands.initialize import init
-from inferia.commands.scaffold_predict import scaffold
-from inferia.commands.run import run
+from cogito.commands.initialize import init
+from cogito.commands.scaffold_predict import scaffold
+from cogito.commands.run import run
 
 
 @click.group()
@@ -16,7 +16,7 @@ from inferia.commands.run import run
 @click.pass_context
 def cli(ctx, config_path: str = ".") -> None:
     """
-    Inferia CLI
+    Cogito CLI
     """
     ctx.ensure_object(dict)
     ctx.obj["config_path"] = config_path

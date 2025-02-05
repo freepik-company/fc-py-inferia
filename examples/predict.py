@@ -2,7 +2,7 @@ import logging
 
 from pydantic import BaseModel, Field
 
-from inferia import BasePredictor
+from cogito import BasePredictor
 
 
 class PredictResponse(BaseModel):

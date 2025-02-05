@@ -9,17 +9,17 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 
-from inferia.api.handlers import (
+from cogito.api.handlers import (
     health_check_handler,
     metrics_handler,
 )
-from inferia.api.responses import ErrorResponse
-from inferia.core.config import ConfigFile
-from inferia.core.exceptioin_handlers import (too_many_requests_exception_handler, validation_exception_handler)
-from inferia.core.exceptions import (ConfigFileNotFoundError, NoThreadsAvailableError, SetupError)
-from inferia.core.logging import get_logger
-from inferia.core.models import BasePredictor
-from inferia.core.utils import (create_routes_semaphores, get_predictor_handler_return_type, load_predictor,
+from cogito.api.responses import ErrorResponse
+from cogito.core.config import ConfigFile
+from cogito.core.exceptioin_handlers import (too_many_requests_exception_handler, validation_exception_handler)
+from cogito.core.exceptions import (ConfigFileNotFoundError, NoThreadsAvailableError, SetupError)
+from cogito.core.logging import get_logger
+from cogito.core.models import BasePredictor
+from cogito.core.utils import (create_routes_semaphores, get_predictor_handler_return_type, load_predictor,
                                 wrap_handler, )
 
 
@@ -37,7 +37,7 @@ class Application:
 
         try:
             self.config = ConfigFile.load_from_file(
-                    os.path.join(f"{config_file_path}/inferia.yaml")
+                    os.path.join(f"{config_file_path}/cogito.yaml")
             )
         except ConfigFileNotFoundError as e:
             self._logger.warning(
@@ -46,12 +46,12 @@ class Application:
             )
             self.config = ConfigFile.default()
 
-        if self.config.inferia.server.cache_dir:
-            os.environ["HF_HOME"] = self.config.inferia.server.cache_dir
-            os.environ["INFERIA_HOME"] = self.config.inferia.server.cache_dir
+        if self.config.cogito.server.cache_dir:
+            os.environ["HF_HOME"] = self.config.cogito.server.cache_dir
+            os.environ["COGITO_HOME"] = self.config.cogito.server.cache_dir
         else:
-            os.environ["HF_HOME"] = os.path.expanduser("/.inferia/models")
-            os.environ["INFERIA_HOME"] = os.path.expanduser("/.inferia/models")
+            os.environ["HF_HOME"] = os.path.expanduser("/.cogito/models")
+            os.environ["COGITO_HOME"] = os.path.expanduser("/.cogito/models")
 
         @asynccontextmanager
         async def lifespan(app: FastAPI):
@@ -67,11 +67,11 @@ class Application:
                 sys.exit(1)
 
         self.app = FastAPI(
-                title=self.config.inferia.server.name,
-                version=self.config.inferia.server.version,
-                description=self.config.inferia.server.description,
-                access_log=self.config.inferia.server.fastapi.access_log,
-                debug=self.config.inferia.server.fastapi.debug,
+                title=self.config.cogito.server.name,
+                version=self.config.cogito.server.version,
+                description=self.config.cogito.server.description,
+                access_log=self.config.cogito.server.fastapi.access_log,
+                debug=self.config.cogito.server.fastapi.debug,
                 lifespan=lifespan,
         )
 
@@ -86,9 +86,9 @@ class Application:
 
         map_route_to_model: Dict[str, str] = {}
         self.map_model_to_instance: Dict[str, BasePredictor] = {}
-        semaphores = create_routes_semaphores(self.config.inferia)
+        semaphores = create_routes_semaphores(self.config.cogito)
 
-        route = self.config.inferia.server.route
+        route = self.config.cogito.server.route
 
         self._logger.info("Adding route", extra={"route": route})
         map_route_to_model[route.path] = route.predictor
@@ -171,10 +171,10 @@ class Application:
     def run(self):
         uvicorn.run(
                 self.app,
-                host=self.config.inferia.server.fastapi.host,
-                port=self.config.inferia.server.fastapi.port,
+                host=self.config.cogito.server.fastapi.host,
+                port=self.config.cogito.server.fastapi.port,
         )
 
     @classmethod
     def _get_default_logger(cls):
-        return get_logger("inferia.app")
+        return get_logger("cogito.app")

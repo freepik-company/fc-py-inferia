@@ -1,8 +1,8 @@
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from inferia.api.responses import ResultResponse
-from inferia.core.utils import wrap_handler
+from cogito.api.responses import ResultResponse
+from cogito.core.utils import wrap_handler
 
 from pydantic._internal._model_construction import ModelMetaclass
 
