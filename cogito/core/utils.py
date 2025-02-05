@@ -9,12 +9,12 @@ from typing import Any, Callable, Dict, get_type_hints
 
 from pydantic import create_model, Field
 
-from inferia.api.responses import ErrorResponse, ResultResponse
-from inferia.core.config import InferiaConfig
-from inferia.core.exceptions import ModelDownloadError, NoThreadsAvailableError
-from inferia.core.metrics import inference_duration_histogram
-from inferia.core.model_store import download_gcp_model, download_huggingface_model
-from inferia.core.models import BasePredictor
+from cogito.api.responses import ErrorResponse, ResultResponse
+from cogito.core.config import CogitoConfig
+from cogito.core.exceptions import ModelDownloadError, NoThreadsAvailableError
+from cogito.core.metrics import inference_duration_histogram
+from cogito.core.model_store import download_gcp_model, download_huggingface_model
+from cogito.core.models import BasePredictor
 
 
 def load_predictor(class_path) -> Any:
@@ -159,7 +159,7 @@ def model_download(model_path: str) -> str:
     - Google Cloud Storage: gs://bucket/path/to/model
     - Hugging Face: repo_owner/repo_name
     """
-    cache_dir = os.getenv("INFERIA_HOME")
+    cache_dir = os.getenv("COGITO_HOME")
     os.environ["HF_HOME"] = cache_dir
 
     try:
@@ -170,7 +170,7 @@ def model_download(model_path: str) -> str:
         raise ModelDownloadError(model_path, e)
 
 
-def create_routes_semaphores(config: InferiaConfig) -> Dict[str, asyncio.Semaphore]:
+def create_routes_semaphores(config: CogitoConfig) -> Dict[str, asyncio.Semaphore]:
     semaphores = {}
     route = config.server.route
     semaphores[route.predictor] = asyncio.Semaphore(config.server.threads)

@@ -3,8 +3,8 @@ import os
 import click
 from jinja2 import Environment, FileSystemLoader
 
-from inferia.core.config import ConfigFile
-from inferia.core.exceptions import ConfigFileNotFoundError
+from cogito.core.config import ConfigFile
+from cogito.core.exceptions import ConfigFileNotFoundError
 
 
 def scaffold_predict_classes(config: ConfigFile, force: bool = False) -> None:
@@ -16,7 +16,7 @@ def scaffold_predict_classes(config: ConfigFile, force: bool = False) -> None:
 
     # Group routes by file
     files = {}
-    route = config.inferia.server.route
+    route = config.cogito.server.route
 
     file_name = f'{route.predictor.split(":")[0]}.py'
     class_name = route.predictor.split(":")[1]
@@ -60,9 +60,9 @@ def scaffold(ctx, force: bool = False) -> None:
 
     click.echo("Generating predict classes...")
 
-    # TODO: inferia.yaml file name should not be mandatory in the application
+    # TODO: cogito.yaml file name should not be mandatory in the application
     try:
-        config = ConfigFile.load_from_file(f"{config_path}/inferia.yaml")
+        config = ConfigFile.load_from_file(f"{config_path}/cogito.yaml")
     except ConfigFileNotFoundError:
         click.echo("No configuration file found. Please initialize the project first.")
         return

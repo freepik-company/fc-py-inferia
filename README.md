@@ -1,8 +1,8 @@
-# Freepik Company inferia
+# Freepik Company cogito
 
-Inferia is a versatile Python module aimed at simplifying the development and deployment of inference services. 
+Cogito is a versatile Python module aimed at simplifying the development and deployment of inference services. 
 It allows users to wrap machine learning models or any computational logic into APIs effortlessly. 
-With inferia, you can focus on your core algorithmic functionality while the module takes care of the heavy lifting, 
+With cogito, you can focus on your core algorithmic functionality while the module takes care of the heavy lifting, 
 including API structure, request handling, error management, and scalability.
 
 Key features include:
@@ -25,7 +25,7 @@ make build
 ### Using pip
 Then, you can install the package:
 ```sh
-pip install inferia
+pip install cogito
 ```
 
 ## Run example application
@@ -35,9 +35,9 @@ cd examples
 python app.py
 ```
 
-## Usage Guide: Inferia CLI
+## Usage Guide: Cogito CLI
 
-The **Inferia CLI** provides several commands to initialize, scaffold, and run your inference-based projects. This guide explains the available commands and their options.
+The **Cogito CLI** provides several commands to initialize, scaffold, and run your inference-based projects. This guide explains the available commands and their options.
 
 ---
 
@@ -66,24 +66,24 @@ Command: `init`
 #### Usage:
 
 ```bash
-inferia-cli init [OPTIONS]
+cogito-cli init [OPTIONS]
 ```
 
 **Examples:**
 
 1. Initialize with prompts:
    ```bash
-   inferia-cli init
+   cogito-cli init
    ```
 
 2. Initialize with default values:
    ```bash
-   inferia-cli init --default
+   cogito-cli init --default
    ```
 
 3. Initialize and scaffold prediction classes:
    ```bash
-   inferia-cli init --scaffold
+   cogito-cli init --scaffold
    ```
 
 ---
@@ -92,7 +92,7 @@ inferia-cli init [OPTIONS]
 
 Command: `scaffold`
 
-**Description:** Generate prediction class files based on the routes defined in the configuration file (`inferia.yaml`).
+**Description:** Generate prediction class files based on the routes defined in the configuration file (`cogito.yaml`).
 
 #### Options:
 
@@ -101,19 +101,19 @@ Command: `scaffold`
 #### Usage:
 
 ```bash
-inferia-cli scaffold [OPTIONS]
+cogito-cli scaffold [OPTIONS]
 ```
 
 **Examples:**
 
 1. Scaffold prediction classes:
    ```bash
-   inferia-cli scaffold
+   cogito-cli scaffold
    ```
 
 2. Scaffold and overwrite existing files:
    ```bash
-   inferia-cli scaffold --force
+   cogito-cli scaffold --force
    ```
 
 ---
@@ -122,24 +122,24 @@ inferia-cli scaffold [OPTIONS]
 
 Command: `run`
 
-**Description:** Run the Inferia application based on the configuration in the specified directory.
+**Description:** Run the cogito application based on the configuration in the specified directory.
 
 #### Usage:
 
 ```bash
-inferia-cli [-c context] run
+cogito-cli [-c context] run
 ```
 
 **Example:**
 
-1. Run the inferia application located in `examples` directory:
+1. Run the cogito application located in `examples` directory:
    ```bash
-   inferia-cli -c examples run
+   cogito-cli -c examples run
    ```
 
 This will:
 - Change the current working directory to the configuration path.
-- Load the application based on the `inferia.yaml` file.
+- Load the application based on the `cogito.yaml` file.
 - Start the FastAPI server for your inference service.
 
 ---

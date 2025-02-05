@@ -1,8 +1,8 @@
 import click
 
-from inferia.commands.scaffold_predict import scaffold_predict_classes
-from inferia.core.config import (
-    InferiaConfig,
+from cogito.commands.scaffold_predict import scaffold_predict_classes
+from cogito.core.config import (
+    CogitoConfig,
     ConfigFile,
     FastAPIConfig,
     RouteConfig,
@@ -76,12 +76,12 @@ def _init_prompted() -> ConfigFile:
 
     click.echo("Great! We're all set.")
 
-    inferia = InferiaConfig(
+    cogito = CogitoConfig(
         server=server,
         training=training,
     )
 
-    return ConfigFile(inferia=inferia)
+    return ConfigFile(cogito=cogito)
 
 
 @click.command()
@@ -116,7 +116,7 @@ def init(
 
     click.echo("Initializing...")
 
-    if ConfigFile.exists(f"{config_path}/inferia.yaml") and not force:
+    if ConfigFile.exists(f"{config_path}/cogito.yaml") and not force:
         click.echo("Already initialized.")
         return
 
@@ -128,5 +128,5 @@ def init(
     if scaffold:
         scaffold_predict_classes(config, force)
 
-    config.save_to_file(f"{config_path}/inferia.yaml")
+    config.save_to_file(f"{config_path}/cogito.yaml")
     click.echo("Initialized successfully.")

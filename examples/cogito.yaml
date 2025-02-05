@@ -1,6 +1,6 @@
-inferia:
+cogito:
   server:
-    cache_dir: /tmp/inferia
+    cache_dir: /tmp/cogito
     description: Inference server
     threads: 4
     fastapi:
@@ -8,7 +8,7 @@ inferia:
       debug: false
       host: 127.0.0.1
       port: 8000
-    name: Sapientia per Inferentiam
+    name: Cogito ergo sum
     route:
       args:
         - description: The prompt to generate text from
