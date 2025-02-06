@@ -1,3 +1,13 @@
+## 0.2.2 (2025-02-06)
+
+### Fix
+
+- **config**: remove hard-coded IP address and allow server to listen on any available IP (#67)
+
+### Refactor
+
+- **initialize,config**: Update project initialization and configuration defaults (#69)
+
 ## 0.2.1 (2025-02-04)
 
 ### Refactor
