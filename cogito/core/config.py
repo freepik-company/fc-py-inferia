@@ -135,11 +135,9 @@ class ConfigFile(BaseModel):
             with open(file_path, "r") as file:
                 yaml_data = yaml.safe_load(file)
             return cls(**yaml_data)
-        except FileNotFoundError as e:
-            print(e)
+        except FileNotFoundError:
             raise ConfigFileNotFoundError(file_path)
-        except Exception as e:
-            print(e)
+        except Exception:
             raise ValueError(f"Error loading configuration file {file_path}")
 
     def save_to_file(self, file_path: str) -> None:
