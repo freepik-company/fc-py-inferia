@@ -20,7 +20,7 @@ def _init_prompted() -> ConfigFile:
         "Please provide the following information to initialize the project configuration:"
     )
     name = click.prompt(
-        "Project name", type=str, default="Sapientia per Inferentiam", show_default=True
+        "Project name", type=str, default="Cogito ergo sum", show_default=True
     )
     description = click.prompt(
         "Project description", type=str, default=None, show_default=True
@@ -51,21 +51,30 @@ def _init_prompted() -> ConfigFile:
 
     click.echo("This starts to look like an amazing inference service!")
 
-    routes = []
+    route = None
 
     if click.confirm(
         "Would you like to add a default route to the API?",
         default=True,
         show_default=True,
     ):
-        routes.append(RouteConfig.default())
+        route = RouteConfig.default()
+
+    cache_dir = click.prompt(
+        "Cache directory for model weights and artifacts",
+        type=str,
+        default="/tmp",
+        show_default=True,
+    )
 
     server = ServerConfig(
         name=name,
         description=description,
         version=version,
         fastapi=fastapi,
-        routes=routes,
+        route=route,
+        cache_dir=cache_dir,
+        threads=1,
     )
 
     click.echo("Almost there! Let's configure the training settings.")
@@ -107,15 +116,11 @@ def _init_prompted() -> ConfigFile:
     help="Force initialization, even if already initialized",
 )
 @click.pass_context
-def init(
-    ctx, scaffold: bool = False, default: bool = False, force: bool = False
-) -> None:
+def init(ctx, scaffold: bool = False, default: bool = False, force: bool = False) -> None:
     """Initialize the project configuration"""
-
-    config_path = ctx.obj["config_path"]
-
+    config_path = ctx.obj.get("config_path", ".") if ctx.obj else "."
     click.echo("Initializing...")
-
+    
     if ConfigFile.exists(f"{config_path}/cogito.yaml") and not force:
         click.echo("Already initialized.")
         return

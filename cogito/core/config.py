@@ -69,12 +69,12 @@ class ServerConfig(BaseModel):
     """
 
     name: str
-    description: Optional[str] = None
+    description: Optional[str]
     version: Optional[str] = "1.0.0"
     fastapi: FastAPIConfig
-    route: RouteConfig
+    route: Optional[RouteConfig]
     cache_dir: str = None
-    threads: int
+    threads: Optional[int] = 1
 
     @classmethod
     def default(cls):
