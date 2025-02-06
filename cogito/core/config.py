@@ -69,12 +69,12 @@ class ServerConfig(BaseModel):
     """
 
     name: str
-    description: Optional[str] = None
+    description: Optional[str]
     version: Optional[str] = "1.0.0"
     fastapi: FastAPIConfig
-    route: RouteConfig
+    route: Optional[RouteConfig]
     cache_dir: str = None
-    threads: int
+    threads: Optional[int] = 1
 
     @classmethod
     def default(cls):
@@ -135,9 +135,11 @@ class ConfigFile(BaseModel):
             with open(file_path, "r") as file:
                 yaml_data = yaml.safe_load(file)
             return cls(**yaml_data)
-        except FileNotFoundError:
+        except FileNotFoundError as e:
+            print(e)
             raise ConfigFileNotFoundError(file_path)
-        except Exception:
+        except Exception as e:
+            print(e)
             raise ValueError(f"Error loading configuration file {file_path}")
 
     def save_to_file(self, file_path: str) -> None:
