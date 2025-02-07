@@ -6,18 +6,6 @@ from pydantic import BaseModel
 
 from cogito.core.exceptions import ConfigFileNotFoundError
 
-
-class ArgConfig(BaseModel):
-    name: str
-    type: str
-    description: Optional[str] = None
-
-
-class ResponseConfig(BaseModel):
-    type: str
-    description: Optional[str] = None
-
-
 class RouteConfig(BaseModel):
     """
     Route configuration.
@@ -27,8 +15,6 @@ class RouteConfig(BaseModel):
     description: Optional[str] = None
     path: str
     predictor: str
-    args: Optional[List["ArgConfig"]] = None
-    response: Optional["ResponseConfig"] = None
     tags: List[str] = List
 
     @classmethod
@@ -38,16 +24,6 @@ class RouteConfig(BaseModel):
                 description="Make a single prediction",
                 path="/v1/predict",
                 predictor="predict:Predictor",
-                args=[
-                    ArgConfig(
-                            name="prompt",
-                            type="str",
-                            description="The prompt to generate text from",
-                    )
-                ],
-                response=ResponseConfig(
-                        type="PredictResponse", description="The generated text"
-                ),
                 tags=["predict"],
         )
 
@@ -56,7 +32,7 @@ class FastAPIConfig(BaseModel):
     host: str = "0.0.0.0"
     port: int = 8000
     debug: bool = False
-    access_log: bool = True
+    access_log: bool = False
 
     @classmethod
     def default(cls):
@@ -70,7 +46,7 @@ class ServerConfig(BaseModel):
 
     name: str
     description: Optional[str]
-    version: Optional[str] = "1.0.0"
+    version: Optional[str] = "0.1.0"
     fastapi: FastAPIConfig
     route: Optional[RouteConfig]
     cache_dir: str = None
@@ -84,7 +60,7 @@ class ServerConfig(BaseModel):
                 version="0.1.0",
                 fastapi=FastAPIConfig.default(),
                 route=RouteConfig.default(),
-                cache_dir="/tmp/cogito",
+                cache_dir="/tmp",
                 threads=1,
         )
 
