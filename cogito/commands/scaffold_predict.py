@@ -46,11 +46,11 @@ def scaffold_predict_classes(config: ConfigFile, force: bool = False) -> None:
 
 @click.command()
 @click.option(
-        "-f",
-        "--force",
-        is_flag=True,
-        default=False,
-        help="Force overwrite of existing files",
+    "-f",
+    "--force",
+    is_flag=True,
+    default=False,
+    help="Force overwrite of existing files",
 )
 @click.pass_context
 def scaffold(ctx, force: bool = False) -> None:

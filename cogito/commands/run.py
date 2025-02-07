@@ -16,7 +16,9 @@ def run(ctx):
     # change cwd to config_path
     os.chdir(absolute_path)
     if not os.path.exists(absolute_path):
-        click.echo(f"Error: Path '{absolute_path}' does not exist.", err=True, color=True)
+        click.echo(
+            f"Error: Path '{absolute_path}' does not exist.", err=True, color=True
+        )
         exit(1)
 
     try:

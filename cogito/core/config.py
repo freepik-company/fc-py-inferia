@@ -34,21 +34,21 @@ class RouteConfig(BaseModel):
     @classmethod
     def default(cls):
         return cls(
-                name="Predict",
-                description="Make a single prediction",
-                path="/v1/predict",
-                predictor="predict:Predictor",
-                args=[
-                    ArgConfig(
-                            name="prompt",
-                            type="str",
-                            description="The prompt to generate text from",
-                    )
-                ],
-                response=ResponseConfig(
-                        type="PredictResponse", description="The generated text"
-                ),
-                tags=["predict"],
+            name="Predict",
+            description="Make a single prediction",
+            path="/v1/predict",
+            predictor="predict:Predictor",
+            args=[
+                ArgConfig(
+                    name="prompt",
+                    type="str",
+                    description="The prompt to generate text from",
+                )
+            ],
+            response=ResponseConfig(
+                type="PredictResponse", description="The generated text"
+            ),
+            tags=["predict"],
         )
 
 
@@ -75,17 +75,19 @@ class ServerConfig(BaseModel):
     route: Optional[RouteConfig]
     cache_dir: str = None
     threads: Optional[int] = 1
+    readyness_file: str = "/var/lock/cogito-readyness.lock"
 
     @classmethod
     def default(cls):
         return cls(
-                name="Cogito ergo sum",
-                description="Inference server",
-                version="0.1.0",
-                fastapi=FastAPIConfig.default(),
-                route=RouteConfig.default(),
-                cache_dir="/tmp/cogito",
-                threads=1,
+            name="Cogito ergo sum",
+            description="Inference server",
+            version="0.1.0",
+            fastapi=FastAPIConfig.default(),
+            route=RouteConfig.default(),
+            cache_dir="/tmp/cogito",
+            threads=1,
+            readyness_file="/var/lock/cogito-readyness.lock",
         )
 
 
@@ -141,5 +143,9 @@ class ConfigFile(BaseModel):
             raise ValueError(f"Error loading configuration file {file_path}")
 
     def save_to_file(self, file_path: str) -> None:
+        path = Path(file_path)
+        if not path.parent.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+
         with open(file_path, "w") as file:
             yaml.dump(self.model_dump(), file)

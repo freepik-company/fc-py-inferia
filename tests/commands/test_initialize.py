@@ -28,20 +28,21 @@ def test_init_default(runner, clean_config):
     assert result.exit_code == 0
     assert "Initializing..." in result.output
     assert os.path.exists("cogito.yaml")
-    
+
     # Verify config file was created with default values
     config = ConfigFile.load_from_file("cogito.yaml")
     assert config.cogito.server.name == "Cogito ergo sum"
     assert config.cogito.server.version == "0.1.0"
     assert config.cogito.server.fastapi.host == "0.0.0.0"
     assert config.cogito.server.fastapi.port == 8000
+    assert config.cogito.server.readyness_file == "/var/lock/cogito-readyness.lock"
 
 
 def test_init_prompted(runner, clean_config):
     # Mock user input values
     inputs = [
         "Test Project",  # name
-        "Test Description",  # description 
+        "Test Description",  # description
         "0.1.0",  # version
         "localhost",  # host
         "8080",  # port
@@ -49,13 +50,14 @@ def test_init_prompted(runner, clean_config):
         "n",  # access log
         "y",  # add default route
         "/tmp/cache",  # cache dir
+        ".cogito-readyness.lock",  # readyness file
     ]
-    
+
     result = runner.invoke(init, input="\n".join(inputs))
     assert result.exit_code == 0
     assert "Initializing..." in result.output
     assert os.path.exists("cogito.yaml")
-    
+
     # Verify config file was created with prompted values
     config = ConfigFile.load_from_file("cogito.yaml")
     assert config.cogito.server.name == "Test Project"
@@ -66,12 +68,13 @@ def test_init_prompted(runner, clean_config):
     assert config.cogito.server.fastapi.debug is False
     assert config.cogito.server.fastapi.access_log is False
     assert config.cogito.server.cache_dir == "/tmp/cache"
+    assert config.cogito.server.readyness_file == ".cogito-readyness.lock"
 
 
 def test_init_already_exists(runner, clean_config):
     # Create initial config
     runner.invoke(init, ["--default"])
-    
+
     # Try to initialize again
     result = runner.invoke(init)
     assert result.exit_code == 0
@@ -81,7 +84,7 @@ def test_init_already_exists(runner, clean_config):
 def test_init_force(runner, clean_config):
     # Create initial config
     runner.invoke(init, ["--default"])
-    
+
     # Force new initialization
     result = runner.invoke(init, ["--force", "--default"])
     assert result.exit_code == 0
