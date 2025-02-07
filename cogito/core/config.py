@@ -75,7 +75,7 @@ class ServerConfig(BaseModel):
     route: Optional[RouteConfig]
     cache_dir: str = None
     threads: Optional[int] = 1
-    readyness_file: str = "/var/lock/cogito-readyness.lock"
+    readiness_file: str = "/var/lock/cogito-readiness.lock"
 
     @classmethod
     def default(cls):
@@ -87,7 +87,7 @@ class ServerConfig(BaseModel):
             route=RouteConfig.default(),
             cache_dir="/tmp/cogito",
             threads=1,
-            readyness_file="/var/lock/cogito-readyness.lock",
+            readiness_file="/var/lock/cogito-readiness.lock",
         )
 
 

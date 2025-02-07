@@ -67,10 +67,10 @@ def _init_prompted() -> ConfigFile:
         show_default=True,
     )
 
-    readyness_file = click.prompt(
-        "Readyness file for health check",
+    readiness_file = click.prompt(
+        "Readiness file for health check",
         type=str,
-        default="/var/lock/cogito-readyness.lock",
+        default="/var/lock/cogito-readiness.lock",
         show_default=True,
     )
 
@@ -82,7 +82,7 @@ def _init_prompted() -> ConfigFile:
         route=route,
         cache_dir=cache_dir,
         threads=1,
-        readyness_file=readyness_file,
+        readiness_file=readiness_file,
     )
 
     click.echo("Almost there! Let's configure the training settings.")

@@ -190,11 +190,11 @@ async def limit_concurrent_requests(semaphore: asyncio.Semaphore):
 
 
 @contextmanager
-def readyness_context(readyness_file: str) -> None:
-    folder = os.path.dirname(readyness_file)
+def readiness_context(readiness_file: str) -> None:
+    folder = os.path.dirname(readiness_file)
     os.makedirs(folder, exist_ok=True)
 
-    with open(readyness_file, "w") as f:
+    with open(readiness_file, "w") as f:
         f.write("ready")
     yield
-    os.remove(readyness_file)
+    os.remove(readiness_file)

@@ -31,7 +31,7 @@ from cogito.core.utils import (
     get_predictor_handler_return_type,
     load_predictor,
     wrap_handler,
-    readyness_context,
+    readiness_context,
 )
 
 
@@ -77,7 +77,7 @@ class Application:
                 )
                 sys.exit(1)
 
-            with readyness_context(self.config.cogito.server.readyness_file):
+            with readiness_context(self.config.cogito.server.readiness_file):
                 yield
 
         self.app = FastAPI(

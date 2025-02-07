@@ -35,7 +35,7 @@ def test_init_default(runner, clean_config):
     assert config.cogito.server.version == "0.1.0"
     assert config.cogito.server.fastapi.host == "0.0.0.0"
     assert config.cogito.server.fastapi.port == 8000
-    assert config.cogito.server.readyness_file == "/var/lock/cogito-readyness.lock"
+    assert config.cogito.server.readiness_file == "/var/lock/cogito-readiness.lock"
 
 
 def test_init_prompted(runner, clean_config):
@@ -50,7 +50,7 @@ def test_init_prompted(runner, clean_config):
         "n",  # access log
         "y",  # add default route
         "/tmp/cache",  # cache dir
-        ".cogito-readyness.lock",  # readyness file
+        ".cogito-readiness.lock",  # readiness file
     ]
 
     result = runner.invoke(init, input="\n".join(inputs))
@@ -68,7 +68,7 @@ def test_init_prompted(runner, clean_config):
     assert config.cogito.server.fastapi.debug is False
     assert config.cogito.server.fastapi.access_log is False
     assert config.cogito.server.cache_dir == "/tmp/cache"
-    assert config.cogito.server.readyness_file == ".cogito-readyness.lock"
+    assert config.cogito.server.readiness_file == ".cogito-readiness.lock"
 
 
 def test_init_already_exists(runner, clean_config):
