@@ -18,7 +18,7 @@ def clean_config():
     if os.path.exists("cogito.yaml"):
         os.remove("cogito.yaml")
     yield
-    # Cleanup after test3
+    # Cleanup after test
     if os.path.exists("cogito.yaml"):
         os.remove("cogito.yaml")
 
@@ -29,13 +29,29 @@ def test_init_default(runner, clean_config):
     assert "Initializing..." in result.output
     assert os.path.exists("cogito.yaml")
 
-    # Verify config file was created with default values
+    # Verify config file was created with default values as per cogito.yaml
     config = ConfigFile.load_from_file("cogito.yaml")
+
+    # Server-level defaults
     assert config.cogito.server.name == "Cogito ergo sum"
     assert config.cogito.server.version == "0.1.0"
+    assert config.cogito.server.cache_dir == "/tmp"
+    assert config.cogito.server.description == "Inference server"
+    assert config.cogito.server.threads == 1
+
+    # FastAPI defaults
     assert config.cogito.server.fastapi.host == "0.0.0.0"
     assert config.cogito.server.fastapi.port == 8000
     assert config.cogito.server.readiness_file == "/var/lock/cogito-readiness.lock"
+    assert config.cogito.server.fastapi.access_log is False
+    assert config.cogito.server.fastapi.debug is False
+
+    # Route defaults (note: args and response are no longer present)
+    assert config.cogito.server.route.name == "Predict"
+    assert config.cogito.server.route.description == "Make a single prediction"
+    assert config.cogito.server.route.path == "/v1/predict"
+    assert config.cogito.server.route.predictor == "predict:Predictor"
+    assert config.cogito.server.route.tags == ["predict"]
 
 
 def test_init_prompted(runner, clean_config):
@@ -49,7 +65,7 @@ def test_init_prompted(runner, clean_config):
         "n",  # debug mode
         "n",  # access log
         "y",  # add default route
-        "/tmp/cache",  # cache dir
+        "/tmp/cache",  # cache_dir
         ".cogito-readiness.lock",  # readiness file
     ]
 
@@ -68,6 +84,13 @@ def test_init_prompted(runner, clean_config):
     assert config.cogito.server.fastapi.debug is False
     assert config.cogito.server.fastapi.access_log is False
     assert config.cogito.server.cache_dir == "/tmp/cache"
+
+    # Route defaults remain (since the prompted version still uses the default values)
+    assert config.cogito.server.route.name == "Predict"
+    assert config.cogito.server.route.description == "Make a single prediction"
+    assert config.cogito.server.route.path == "/v1/predict"
+    assert config.cogito.server.route.predictor == "predict:Predictor"
+    assert config.cogito.server.route.tags == ["predict"]
     assert config.cogito.server.readiness_file == ".cogito-readiness.lock"
 
 
