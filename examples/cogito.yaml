@@ -1,5 +1,6 @@
 cogito:
   server:
+    readiness_file: /tmp/cogito-readiness.lock
     cache_dir: /tmp/cogito
     description: Inference server
     threads: 4

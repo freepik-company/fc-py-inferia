@@ -4,13 +4,7 @@ from prometheus_client import generate_latest
 
 
 async def health_check_handler(request: Request) -> JSONResponse:
-    if request.app.state.ready:
-        return JSONResponse({"status": "OK"})
-    else:
-        return JSONResponse(
-            {"status": "Starting"},
-            status_code=503,
-        )
+    return JSONResponse({"status": "OK"})
 
 
 async def metrics_handler(request: Request) -> Response:

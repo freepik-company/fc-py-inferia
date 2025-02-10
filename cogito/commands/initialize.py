@@ -67,6 +67,13 @@ def _init_prompted() -> ConfigFile:
         show_default=True,
     )
 
+    readiness_file = click.prompt(
+        "Readiness file for health check",
+        type=str,
+        default="/var/lock/cogito-readiness.lock",
+        show_default=True,
+    )
+
     server = ServerConfig(
         name=name,
         description=description,
@@ -75,6 +82,7 @@ def _init_prompted() -> ConfigFile:
         route=route,
         cache_dir=cache_dir,
         threads=1,
+        readiness_file=readiness_file,
     )
 
     click.echo("Almost there! Let's configure the training settings.")
@@ -116,11 +124,13 @@ def _init_prompted() -> ConfigFile:
     help="Force initialization, even if already initialized",
 )
 @click.pass_context
-def init(ctx, scaffold: bool = False, default: bool = False, force: bool = False) -> None:
+def init(
+    ctx, scaffold: bool = False, default: bool = False, force: bool = False
+) -> None:
     """Initialize the project configuration"""
     config_path = ctx.obj.get("config_path", ".") if ctx.obj else "."
     click.echo("Initializing...")
-    
+
     if ConfigFile.exists(f"{config_path}/cogito.yaml") and not force:
         click.echo("Already initialized.")
         return

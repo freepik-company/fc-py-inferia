@@ -9,5 +9,7 @@ repos:
     hooks:
       - id: pytest
         name: Run Pytest
-        entry: make run-test
+        entry: pytest
         language: system
+        pass_filenames: false
+        always_run: true

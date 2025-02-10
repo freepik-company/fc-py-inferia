@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import contextmanager
 import importlib
 import inspect
 import logging
@@ -186,3 +187,14 @@ async def limit_concurrent_requests(semaphore: asyncio.Semaphore):
         yield  # Ejecuta la lógica de la ruta
     finally:
         semaphore.release()  # Libera el semáforo al finalizar
+
+
+@contextmanager
+def readiness_context(readiness_file: str) -> None:
+    folder = os.path.dirname(readiness_file)
+    os.makedirs(folder, exist_ok=True)
+
+    with open(readiness_file, "w") as f:
+        f.write("ready")
+    yield
+    os.remove(readiness_file)

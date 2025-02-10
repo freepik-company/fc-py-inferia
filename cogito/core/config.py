@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from cogito.core.exceptions import ConfigFileNotFoundError
 
+
 class RouteConfig(BaseModel):
     """
     Route configuration.
@@ -20,11 +21,11 @@ class RouteConfig(BaseModel):
     @classmethod
     def default(cls):
         return cls(
-                name="Predict",
-                description="Make a single prediction",
-                path="/v1/predict",
-                predictor="predict:Predictor",
-                tags=["predict"],
+            name="Predict",
+            description="Make a single prediction",
+            path="/v1/predict",
+            predictor="predict:Predictor",
+            tags=["predict"],
         )
 
 
@@ -51,17 +52,19 @@ class ServerConfig(BaseModel):
     route: Optional[RouteConfig]
     cache_dir: str = None
     threads: Optional[int] = 1
+    readiness_file: str = "/var/lock/cogito-readiness.lock"
 
     @classmethod
     def default(cls):
         return cls(
-                name="Cogito ergo sum",
-                description="Inference server",
-                version="0.1.0",
-                fastapi=FastAPIConfig.default(),
-                route=RouteConfig.default(),
-                cache_dir="/tmp",
-                threads=1,
+            name="Cogito ergo sum",
+            description="Inference server",
+            version="0.1.0",
+            fastapi=FastAPIConfig.default(),
+            route=RouteConfig.default(),
+            cache_dir="/tmp",
+            threads=1,
+            readiness_file="/var/lock/cogito-readiness.lock",
         )
 
 
@@ -117,5 +120,9 @@ class ConfigFile(BaseModel):
             raise ValueError(f"Error loading configuration file {file_path}")
 
     def save_to_file(self, file_path: str) -> None:
+        path = Path(file_path)
+        if not path.parent.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+
         with open(file_path, "w") as file:
             yaml.dump(self.model_dump(), file)
