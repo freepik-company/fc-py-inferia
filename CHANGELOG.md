@@ -1,3 +1,13 @@
+## 0.2.3 (2025-02-10)
+
+### Feat
+
+- Add readiness file support for health checks and application startup (#72)
+
+### Refactor
+
+- **config,template**: Simplify route configuration and update predict template (#70)
+
 ## 0.2.2 (2025-02-06)
 
 ### Fix
