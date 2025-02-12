@@ -56,7 +56,7 @@ def scaffold_predict_classes(config: ConfigFile, force: bool = False) -> None:
 def scaffold(ctx, force: bool = False) -> None:
     """Generate predict classes"""
 
-    config_path = ctx.obj["config_path"]
+    config_path = ctx.obj.get("config_path", ".") if ctx.obj else "."
 
     click.echo("Generating predict classes...")
 
