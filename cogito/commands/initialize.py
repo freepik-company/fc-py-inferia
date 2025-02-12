@@ -70,7 +70,7 @@ def _init_prompted() -> ConfigFile:
     readiness_file = click.prompt(
         "Readiness file for health check",
         type=str,
-        default="/var/lock/cogito-readiness.lock",
+        default="$HOME/readiness.lock",
         show_default=True,
     )
 

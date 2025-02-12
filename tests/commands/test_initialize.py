@@ -42,7 +42,7 @@ def test_init_default(runner, clean_config):
     # FastAPI defaults
     assert config.cogito.server.fastapi.host == "0.0.0.0"
     assert config.cogito.server.fastapi.port == 8000
-    assert config.cogito.server.readiness_file == "/var/lock/cogito-readiness.lock"
+    assert config.cogito.server.readiness_file == "$HOME/readiness.lock"
     assert config.cogito.server.fastapi.access_log is False
     assert config.cogito.server.fastapi.debug is False
 
