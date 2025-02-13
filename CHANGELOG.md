@@ -1,3 +1,11 @@
+## 0.2.4a0 (2025-02-13)
+
+### Fix
+
+- **pyproject.toml**: avoid pydantic version requirements in pyproject (#77)
+- changes the default value of readiness file (#75)
+- Fixes predict function return type in jinja template (#74)
+
 ## 0.2.3 (2025-02-10)
 
 ### Feat
