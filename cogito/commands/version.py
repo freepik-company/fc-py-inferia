@@ -13,5 +13,5 @@ def version():
             version = pyproject_data["project"]["version"]
             click.echo(f"Cogito version {version}")
     except Exception as e:
-        click.echo(f"Error al leer la versión: {str(e)}", err=True)
+        click.echo(f"Error reading version: {str(e)}", err=True)
         raise click.Abort()
