@@ -19,9 +19,6 @@ cogito:
       name: Predict
       path: /v1/predict
       predictor: predict:Predictor
-      response:
-        description: The generated text
-        type: PredictResponse
       tags:
         - predict
     version: 0.1.0

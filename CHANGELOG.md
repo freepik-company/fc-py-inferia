@@ -1,3 +1,9 @@
+## 0.2.4a2 (2025-02-14)
+
+### Fix
+
+- **cogito.core.utils**: changes the default type from None to Any (#80)
+
 ## 0.2.4a1 (2025-02-14)
 
 ### Fix
