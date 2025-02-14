@@ -46,7 +46,7 @@ def load_predictor(class_path) -> Any:
 def get_predictor_handler_return_type(predictor: BasePredictor):
     """This method returns the type of the output of the predictor.predict method"""
     # Get the return type of the predictor.predict method
-    return_type = predictor.predict.__annotations__.get("return", None)
+    return_type = predictor.predict.__annotations__.get("return", Any)
 
     # Create a new dynamic type based on ResultResponse, with the correct module and annotated field
     return_class = type(
