@@ -8,7 +8,14 @@ import time
 from inspect import Parameter, signature
 from typing import Any, Callable, Dict, get_type_hints
 
-from pydantic import create_model, Field
+try:
+    # Pydantic v2
+    from pydantic.fields import FieldInfo as Field
+except ImportError:
+    # Pydantic v1
+    from pydantic.fields import Field
+
+from pydantic import create_model
 
 from cogito.api.responses import ErrorResponse, ResultResponse
 from cogito.core.config import CogitoConfig
@@ -71,6 +78,10 @@ def wrap_handler(
     for name, param in sig.parameters.items():
         param_type = type_hints.get(name, Any)
         default_value = param.default if param.default != Parameter.empty else ...
+        print(f"default_value: {default_value}")
+        if not isinstance(default_value, type(...)):  # Comprueba si no es Ellipsis
+            if isinstance(default_value, Field):
+                default_value = default_value.default
         input_fields[name] = (param_type, Field(default=default_value))
     input_model = create_model(f"{class_name}Request", **input_fields)
 
@@ -82,8 +93,13 @@ def wrap_handler(
             async def a_timed_handler(input):
                 result = None
                 try:
+                    dict_input = input.model_dump()
+                except:
+                    dict_input = input.dict()
+
+                try:
                     start_time = time.time()
-                    result = await original_handler(**input.model_dump())
+                    result = await original_handler(**dict_input)
                     end_time = time.time() - start_time
                     inference_duration_histogram.record(
                         end_time * 1000, {"predictor": class_name, "async": True}
@@ -96,7 +112,7 @@ def wrap_handler(
 
                 return response_model(
                     inference_time_seconds=end_time,
-                    input=input.model_dump(),
+                    input=dict_input,
                     result=result,
                 )
 
@@ -117,8 +133,12 @@ def wrap_handler(
             def timed_handler(intput: input_model):
                 result = None
                 try:
+                    dict_input = input.model_dump()
+                except:
+                    dict_input = input.dict()
+                try:
                     start_time = time.time()
-                    result = original_handler(**input.model_dump())
+                    result = original_handler(**dict_input)
                     end_time = time.time() - start_time
                     inference_duration_histogram.record(
                         end_time * 1000, {"predictor": class_name, "async": False}
@@ -131,7 +151,7 @@ def wrap_handler(
 
                 return response_model(
                     inference_time_seconds=end_time,
-                    input=input.model_dump(),
+                    input=dict_input,
                     result=result,
                 )
 

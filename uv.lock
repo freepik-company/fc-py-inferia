@@ -373,7 +373,7 @@ wheels = [
 
 [[package]]
 name = "cogito"
-version = "0.2.3"
+version = "0.2.4a0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
@@ -414,7 +414,7 @@ requires-dist = [
     { name = "opentelemetry-instrumentation-fastapi", specifier = ">=0.50b0" },
     { name = "opentelemetry-sdk", specifier = ">=1.29.0" },
     { name = "prometheus-client", specifier = ">=0.21.1" },
-    { name = "pydantic", specifier = ">=2.10.5" },
+    { name = "pydantic", specifier = ">=1.10.0,<3.0.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "structlog", specifier = ">=25.1.0" },
     { name = "uvicorn", specifier = ">=0.34.0" },
