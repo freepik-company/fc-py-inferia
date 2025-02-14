@@ -1,3 +1,9 @@
+## 0.2.4a1 (2025-02-14)
+
+### Fix
+
+- fix error with pydantic2 model_dump function (#78)
+
 ## 0.2.4a0 (2025-02-13)
 
 ### Fix
