@@ -7,8 +7,7 @@ def download_huggingface_model(model_id: str, cache_dir: str) -> str:
     """
     Download a model from Hugging Face and return the model id.
     """
-    snapshot_download(repo_id=model_id, cache_dir=cache_dir)
-    return model_id
+    return snapshot_download(repo_id=model_id, cache_dir=cache_dir)
 
 
 def download_gcp_model(model_path: str, cache_dir: str) -> str:

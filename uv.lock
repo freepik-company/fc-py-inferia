@@ -373,7 +373,7 @@ wheels = [
 
 [[package]]
 name = "cogito"
-version = "0.2.4a0"
+version = "0.2.4"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
@@ -388,6 +388,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pyyaml" },
     { name = "structlog" },
+    { name = "tomli" },
     { name = "uvicorn" },
 ]
 
@@ -408,7 +409,7 @@ requires-dist = [
     { name = "click", specifier = ">=8.1.8" },
     { name = "fastapi", specifier = ">=0.115.6" },
     { name = "google-cloud-storage", specifier = ">=2.19.0" },
-    { name = "huggingface-hub", specifier = ">=0.27.1" },
+    { name = "huggingface-hub" },
     { name = "jinja2", specifier = ">=3.1.5" },
     { name = "opentelemetry-exporter-prometheus", specifier = ">=0.50b0" },
     { name = "opentelemetry-instrumentation-fastapi", specifier = ">=0.50b0" },
@@ -417,6 +418,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=1.10.0,<3.0.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "structlog", specifier = ">=25.1.0" },
+    { name = "tomli", specifier = ">=2.0.1" },
     { name = "uvicorn", specifier = ">=0.34.0" },
 ]
 
