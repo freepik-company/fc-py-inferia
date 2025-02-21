@@ -1,3 +1,9 @@
+## 0.2.5 (2025-02-21)
+
+### Refactor
+
+- hf hub version dependency removed (#85)
+
 ## 0.2.4 (2025-02-18)
 
 ### Feat
